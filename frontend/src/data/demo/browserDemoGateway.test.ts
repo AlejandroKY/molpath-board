@@ -51,14 +51,11 @@ describe('BrowserDemoGateway: mismas reglas que el backend', () => {
     const author = await as('patologia.demo');
     const caseId = '20000000-0000-4000-8000-000000000001';
     const c = await author.createComment(caseId, 'CASE', caseId, 'v1');
-    const other = new BrowserDemoGateway(null);
-    // mismo estado en memoria no se comparte entre instancias: se comprueba en la misma instancia cambiando de sesión
     author.setSession(await author.login('oncologia.demo'));
     await expect(author.editComment(c.id, 'intruso')).rejects.toMatchObject({ status: 403 });
     author.setSession(await author.login('patologia.demo'));
     await author.editComment(c.id, 'v2');
     expect((await author.commentRevisions(c.id)).map((r) => r.body)).toEqual(['v1']);
-    expect(other).toBeDefined();
   });
 
   it('búsqueda tipada sobre el dataset', async () => {
