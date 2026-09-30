@@ -16,6 +16,7 @@ import { SearchPage } from '../features/search/SearchPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { CaseSnapshotsPage, SnapshotComparePage, SnapshotsPage } from '../features/snapshots/SnapshotPages';
 import { TimelinePage } from '../features/timeline/TimelinePage';
+import { PresentationPage } from '../features/present/PresentationPage';
 import { Layout, NotFound } from './Layout';
 import { LoginScreen } from './LoginScreen';
 
@@ -27,6 +28,7 @@ function Routed() {
   if (!session) return <LoginScreen />;
   return (
     <Routes>
+      <Route path="cases/:caseId/present" element={<PresentationPage />} />
       <Route element={<Layout />}>
         <Route index element={<DashboardPage />} />
         <Route path="search" element={<SearchPage />} />

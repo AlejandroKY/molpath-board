@@ -61,3 +61,22 @@ describe('Pizarra Molecular', () => {
     expect(screen.queryByRole('dialog', { name: /Detalle/ })).not.toBeInTheDocument();
   });
 });
+
+describe('Modo presentación', () => {
+  it('abre sin sidebar, navega por secciones con teclado y permite salir', async () => {
+    window.localStorage.clear();
+    const gateway = new BrowserDemoGateway(null);
+    window.localStorage.setItem('molpath-session-v1', JSON.stringify(await gateway.login('oncologia.demo')));
+    window.location.hash = `#/cases/${DEMO_001}/present`;
+    const user = userEvent.setup();
+    render(<App gateway={gateway} queryClient={new QueryClient({ defaultOptions: { queries: { retry: false } } })} />);
+    expect(await screen.findByRole('heading', { name: 'Resumen', level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole('complementary', { name: 'Navegación principal' })).not.toBeInTheDocument();
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByRole('heading', { name: 'Patología', level: 2 })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /Preguntas abiertas/ }));
+    expect(await screen.findByText('Observación del sistema')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Salir de presentación' }));
+    expect(await screen.findByRole('heading', { name: 'DEMO-001' })).toBeInTheDocument();
+  });
+});

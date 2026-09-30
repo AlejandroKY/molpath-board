@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Sparkline } from '../../components/scientific';
+import { newVariantsByTest, variantEvolution } from '../../domain/caseInsights';
+import type { TimelineEntry } from '../../domain/types';
 import { CaseTabs } from '../../app/Layout';
 import { Empty, ErrorBox, Loading, PageHead } from '../../components/ui';
 import { useGateway } from '../../data/GatewayProvider';
@@ -32,25 +35,18 @@ export function TimelinePage() {
       <CaseTabs caseId={b.caseRecord.id} />
       <div className="grid grid-2">
         <section className="card">
-          <div className="card-head"><h2>Línea de tiempo</h2><span className="small muted">eventos + muestras + estudios + snapshots</span></div>
+          <div className="card-head"><h2>Evolución del caso</h2><span className="small muted">diagnóstico · muestras · estudios · snapshots</span></div>
           <div className="card-body">
             <ErrorBox error={timeline.error} />
             {timeline.isLoading && <Loading />}
-            {timeline.data?.length === 0 && <Empty>Sin eventos.</Empty>}
-            <ol className="timeline">
-              {timeline.data?.map((e, i) => (
-                <li key={`${e.refId}-${i}`} className={`k-${e.kind}`}>
-                  <div className="t-date">{formatDate(e.date)} · {KIND_TEXT[e.kind]}{e.kind === 'EVENT' && ` · ${EVENT_TYPE_LABEL[e.eventType as TimelineEventType] ?? e.eventType}`}</div>
-                  <div>
-                    {e.kind === 'SNAPSHOT' ? <Link to={`/cases/${b.caseRecord.id}/snapshots/${e.refId}`}><strong>{e.title}</strong></Link> : <strong>{e.title}</strong>}
-                  </div>
-                  {e.detail && <div className="small muted">{e.detail}</div>}
-                </li>
-              ))}
-            </ol>
+            {timeline.data?.length === 0 && <Empty>Sin eventos registrados.</Empty>}
+            {timeline.data && <TimelineVisual entries={timeline.data} board={b} />}
           </div>
         </section>
-        <SampleComparison board={b} />
+        <div className="stack">
+          <VariantEvolutionCard board={b} />
+          <SampleComparison board={b} />
+        </div>
       </div>
       {adding && <TimelineEventDialog caseId={b.caseRecord.id} samples={b.samples} onClose={() => setAdding(false)} />}
     </>
@@ -59,7 +55,9 @@ export function TimelinePage() {
 
 function SampleComparison({ board }: { board: CaseBoard }) {
   const samples = board.samples;
-  const [a, setA] = useState(samples[0]?.id ?? '');
+  const [params] = useSearchParams();
+  const pre = params.get('compare');
+  const [a, setA] = useState(pre && samples.some((s) => s.id === pre) ? pre : samples[0]?.id ?? '');
   const [bId, setB] = useState(samples[samples.length - 1]?.id ?? '');
   useEffect(() => {
     if (!samples.some((s) => s.id === a)) setA(samples[0]?.id ?? '');
@@ -152,6 +150,70 @@ function SampleComparison({ board }: { board: CaseBoard }) {
             )}
           </>
         )}
+      </div>
+    </section>
+  );
+}
+
+const MONTH = (d: string) => new Date(`${d.slice(0, 10)}T00:00:00`).toLocaleDateString('es', { month: 'short', year: 'numeric' }).toUpperCase();
+const MARK: Record<TimelineEntry['kind'], string> = { EVENT: '◆', SAMPLE: 'M', MOLECULAR_TEST: 'NGS', SNAPSHOT: '▣' };
+
+/** Línea temporal visual agrupada por mes, con las variantes que aparecen por primera vez. */
+function TimelineVisual({ entries, board }: { entries: TimelineEntry[]; board: CaseBoard }) {
+  const fresh = newVariantsByTest(board);
+  const firstTest = [...board.molecularTests].sort((x, y) => (x.testDate ?? '').localeCompare(y.testDate ?? ''))[0]?.id;
+  let lastMonth = '';
+  return (
+    <ol className="tl" aria-label="Línea de tiempo">
+      {entries.map((e, i) => {
+        const month = MONTH(e.date);
+        const header = month !== lastMonth ? month : null;
+        lastMonth = month;
+        const test = e.kind === 'MOLECULAR_TEST' ? board.molecularTests.find((t) => t.id === e.refId) : undefined;
+        const newVariants = e.kind === 'MOLECULAR_TEST' ? fresh.get(e.refId) ?? [] : [];
+        return (
+          <li key={`${e.refId}-${i}`}>
+            {header && <div className="tl-month">{header}</div>}
+            <div className="tl-item">
+              <span className={`tl-dot k-${e.kind}`} aria-hidden>{e.kind === 'MOLECULAR_TEST' ? (test?.testType === 'FISH' ? 'F' : 'Mol') : MARK[e.kind]}</span>
+              <div className="tl-body">
+                <div className="tl-kind">{formatDate(e.date)} · {KIND_TEXT[e.kind]}{e.kind === 'EVENT' && ` · ${EVENT_TYPE_LABEL[e.eventType as TimelineEventType] ?? e.eventType}`}</div>
+                {e.kind === 'SNAPSHOT' ? <Link to={`/cases/${board.caseRecord.id}/snapshots/${e.refId}`}><strong>{e.title}</strong></Link> : <strong>{e.title}</strong>}
+                {e.detail && <div className="small muted">{e.detail}</div>}
+                {newVariants.length > 0 && (
+                  <div className="tl-new">{e.refId === firstTest ? 'Variantes detectadas' : '+ Nueva variante'}: <span className="mono">{newVariants.join(', ')}</span></div>
+                )}
+              </div>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+/** Evolución de la VAF de variantes presentes en varias muestras. */
+function VariantEvolutionCard({ board }: { board: CaseBoard }) {
+  const trajectories = variantEvolution(board);
+  return (
+    <section className="card">
+      <div className="card-head"><h2>Evolución de VAF</h2><span className="small muted">variantes presentes en ≥ 2 muestras</span></div>
+      <div className="card-body">
+        {trajectories.length === 0 ? <p className="small muted">Ninguna variante aparece todavía en más de una muestra.</p> : trajectories.map((t) => (
+          <div key={t.key} className="vaf-evo">
+            <strong className="mono" style={{ minWidth: 130 }}>{t.label}</strong>
+            <div className="vaf-steps">
+              {t.points.map((p, k) => (
+                <span key={p.sampleId} style={{ display: 'contents' }}>
+                  {k > 0 && <span aria-hidden className="muted">→</span>}
+                  <span className="step"><strong>{formatPct(p.vaf)}</strong><small>{p.sampleLabel} · {formatDate(p.date)}</small></span>
+                </span>
+              ))}
+            </div>
+            {t.points.length >= 2 && <Sparkline values={t.points.map((p) => p.vaf)} label={`Trayectoria de VAF de ${t.label}`} />}
+          </div>
+        ))}
+        <p className="tiny muted" style={{ marginTop: 6 }}>La VAF depende también del porcentaje tumoral de cada muestra: compare ambos datos antes de extraer conclusiones.</p>
       </div>
     </section>
   );
