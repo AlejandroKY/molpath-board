@@ -93,6 +93,8 @@ Orden ajustado respecto a la propuesta original (ver ADR-015): las entidades cl�
 > **Limitaciones conocidas:** relaciones gen→gen de cascadas pendientes de fuente verificada; OncoKB desactivado por licencia; autenticación con login de desarrollo (IdP real pendiente); en modo demo los datos son locales a cada navegador.
 
 ## Fase 13 · Publicación
-- [ ] Repositorio en GitHub
-- [ ] CI (backend + frontend)
-- [ ] GitHub Pages (modo demo)
+- [x] Repositorio en GitHub
+- [x] CI (backend + frontend)
+- [x] GitHub Pages (modo demo)
+
+> **Publicado:** repositorio https://github.com/AlejandroKY/molpath-board · web (modo demo) https://alejandroky.github.io/molpath-board/ · CI de backend y frontend en verde en GitHub Actions.
