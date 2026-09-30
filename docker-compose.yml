@@ -1,0 +1,58 @@
+# Entorno local completo: PostgreSQL + backend + frontend.
+#   cp .env.example .env && docker compose up --build
+# Frontend: http://localhost:8081 · API: http://localhost:8080 · Swagger: http://localhost:8080/swagger-ui.html
+name: molpath-board
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-molpath}
+      POSTGRES_USER: ${POSTGRES_USER:-molpath}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://postgres:5432/molpath}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-molpath}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:?Define SPRING_DATASOURCE_PASSWORD en .env}
+      MOLPATH_JWT_SECRET: ${MOLPATH_JWT_SECRET:?Define MOLPATH_JWT_SECRET en .env}
+      MOLPATH_JWT_TTL_MINUTES: ${MOLPATH_JWT_TTL_MINUTES:-480}
+      MOLPATH_DEV_LOGIN_ENABLED: ${MOLPATH_DEV_LOGIN_ENABLED:-true}
+      MOLPATH_DEMO_SEED: ${MOLPATH_DEMO_SEED:-true}
+      MOLPATH_CORS_ORIGINS: ${MOLPATH_CORS_ORIGINS:-http://localhost:8081}
+      NCBI_API_KEY: ${NCBI_API_KEY:-}
+      NCBI_CONTACT_EMAIL: ${NCBI_CONTACT_EMAIL:-}
+      MOLPATH_ONCOKB_ENABLED: ${MOLPATH_ONCOKB_ENABLED:-false}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_DATA_MODE: api
+        VITE_API_BASE_URL: http://localhost:8080
+    depends_on:
+      - backend
+    ports:
+      - "8081:80"
+
+volumes:
+  pgdata:

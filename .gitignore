@@ -1,0 +1,25 @@
+# Secrets / entorno
+.env
+.env.*
+!.env.example
+
+# Backend
+backend/target/
+backend/.data/
+*.class
+*.log
+hs_err_pid*
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/.vite/
+
+# IDE / SO
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.iml
+.DS_Store
+Thumbs.db

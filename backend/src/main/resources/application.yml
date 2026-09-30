@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: molpath-board
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/molpath}
+    username: ${SPRING_DATASOURCE_USERNAME:molpath}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-stacktrace: never
+    include-message: never
+  forward-headers-strategy: framework
+
+molpath:
+  app:
+    name: MolPath Board
+  security:
+    jwt-secret: ${MOLPATH_JWT_SECRET:}
+    jwt-ttl-minutes: ${MOLPATH_JWT_TTL_MINUTES:480}
+    dev-login-enabled: ${MOLPATH_DEV_LOGIN_ENABLED:false}
+    cors-origins: ${MOLPATH_CORS_ORIGINS:http://localhost:5173}
+  demo:
+    seed: ${MOLPATH_DEMO_SEED:false}
+  providers:
+    timeout: 15s
+    ncbi:
+      base-url: https://eutils.ncbi.nlm.nih.gov/entrez/eutils
+      api-key: ${NCBI_API_KEY:}
+      contact-email: ${NCBI_CONTACT_EMAIL:}
+      tool: molpath-board
+    civic:
+      graphql-url: https://civicdb.org/api/graphql
+      enabled: true
+    reactome:
+      base-url: https://reactome.org/ContentService
+      enabled: true
+    oncokb:
+      enabled: ${MOLPATH_ONCOKB_ENABLED:false}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    com.molpath: INFO

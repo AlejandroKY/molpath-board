@@ -1,0 +1,24 @@
+{
+ "id": 347,
+ "name": "EID347",
+ "evidenceType": "PROGNOSTIC",
+ "evidenceLevel": "B",
+ "evidenceDirection": "SUPPORTS",
+ "significance": "BETTER_OUTCOME",
+ "evidenceRating": 3,
+ "description": "Median survival of patients with EGFR L858R mutation is better than those with wild type EGFR.",
+ "variantOrigin": "SOMATIC",
+ "disease": {
+  "name": "Lung Non-small Cell Carcinoma"
+ },
+ "therapies": [],
+ "molecularProfile": {
+  "name": "EGFR L858R"
+ },
+ "source": {
+  "citationId": "24662454",
+  "sourceType": "PUBMED",
+  "citation": "Douillard et al., 2014",
+  "publicationYear": 2014
+ }
+}

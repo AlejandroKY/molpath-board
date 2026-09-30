@@ -1,0 +1,359 @@
+{
+  "datasetVersion": 1,
+  "notice": "Dataset de DEMOSTRACIÓN. Todos los casos, pacientes, muestras, resultados, usuarios, comentarios e interpretaciones son FICTICIOS. Los registros científicos (evidencias CIViC, publicaciones PubMed, genes NCBI y pathways Reactome) son reales, fueron consultados en las fuentes oficiales en la fecha indicada en retrievedAt y conservan su procedencia. No utilizar para decisiones clínicas.",
+  "users": [
+    { "id": "10000000-0000-4000-8000-000000000001", "username": "patologia.demo", "displayName": "Dra. Ana Demo", "role": "PATHOLOGY" },
+    { "id": "10000000-0000-4000-8000-000000000002", "username": "molecular.demo", "displayName": "Lic. Bruno Demo", "role": "MOLECULAR_BIOLOGY" },
+    { "id": "10000000-0000-4000-8000-000000000003", "username": "oncologia.demo", "displayName": "Dr. Carlos Demo", "role": "ONCOLOGY" },
+    { "id": "10000000-0000-4000-8000-000000000004", "username": "genetica.demo", "displayName": "Dra. Diana Demo", "role": "GENETICS" },
+    { "id": "10000000-0000-4000-8000-000000000005", "username": "bioinfo.demo", "displayName": "Ing. Elena Demo", "role": "BIOINFORMATICS" },
+    { "id": "10000000-0000-4000-8000-000000000006", "username": "investigacion.demo", "displayName": "Dr. Félix Demo", "role": "RESEARCHER" },
+    { "id": "10000000-0000-4000-8000-000000000007", "username": "admin.demo", "displayName": "Admin Demo", "role": "ADMIN" }
+  ],
+  "sourceVersions": [
+    { "id": "34000000-0000-4000-8000-000000000001", "sourceCode": "CIVIC", "versionLabel": "API GraphQL en vivo (release mensual más reciente: 01-Sep-2026)", "retrievedAt": "2026-09-30T18:00:00Z" },
+    { "id": "34000000-0000-4000-8000-000000000002", "sourceCode": "PUBMED", "versionLabel": "NCBI E-utilities (PubMed lastupdate 2026/09/30 07:10)", "retrievedAt": "2026-09-30T18:00:00Z" },
+    { "id": "34000000-0000-4000-8000-000000000003", "sourceCode": "REACTOME", "versionLabel": "Reactome v97", "retrievedAt": "2026-09-30T18:00:00Z" },
+    { "id": "34000000-0000-4000-8000-000000000004", "sourceCode": "NCBI_GENE", "versionLabel": "NCBI Gene vía E-utilities", "retrievedAt": "2026-09-30T18:00:00Z" }
+  ],
+  "genes": [
+    { "id": "30000000-0000-4000-8000-000000000001", "symbol": "EGFR", "name": "epidermal growth factor receptor", "entrezId": "1956", "uniprotId": "P00533", "sourceVersionId": "34000000-0000-4000-8000-000000000004" },
+    { "id": "30000000-0000-4000-8000-000000000002", "symbol": "TP53", "name": "tumor protein p53", "entrezId": "7157", "uniprotId": "P04637", "sourceVersionId": "34000000-0000-4000-8000-000000000004" },
+    { "id": "30000000-0000-4000-8000-000000000003", "symbol": "BRAF", "name": "B-Raf proto-oncogene, serine/threonine kinase", "entrezId": "673", "uniprotId": "P15056", "sourceVersionId": "34000000-0000-4000-8000-000000000004" }
+  ],
+  "pathways": [
+    { "id": "31000000-0000-4000-8000-000000000001", "sourceCode": "REACTOME", "externalId": "R-HSA-177929", "name": "Signaling by EGFR", "sourceVersionId": "34000000-0000-4000-8000-000000000003" },
+    { "id": "31000000-0000-4000-8000-000000000002", "sourceCode": "REACTOME", "externalId": "R-HSA-1236382", "name": "Constitutive Signaling by Ligand-Responsive EGFR Cancer Variants", "sourceVersionId": "34000000-0000-4000-8000-000000000003" },
+    { "id": "31000000-0000-4000-8000-000000000003", "sourceCode": "REACTOME", "externalId": "R-HSA-6804116", "name": "TP53 Regulates Transcription of Genes Involved in G1 Cell Cycle Arrest", "sourceVersionId": "34000000-0000-4000-8000-000000000003" },
+    { "id": "31000000-0000-4000-8000-000000000004", "sourceCode": "REACTOME", "externalId": "R-HSA-5673000", "name": "RAF activation", "sourceVersionId": "34000000-0000-4000-8000-000000000003" },
+    { "id": "31000000-0000-4000-8000-000000000005", "sourceCode": "REACTOME", "externalId": "R-HSA-6802948", "name": "Signaling by high-kinase activity BRAF mutants", "sourceVersionId": "34000000-0000-4000-8000-000000000003" }
+  ],
+  "genePathways": [
+    { "geneId": "30000000-0000-4000-8000-000000000001", "pathwayId": "31000000-0000-4000-8000-000000000001", "sourceVersionId": "34000000-0000-4000-8000-000000000003", "retrievedAt": "2026-09-30T18:00:00Z" },
+    { "geneId": "30000000-0000-4000-8000-000000000001", "pathwayId": "31000000-0000-4000-8000-000000000002", "sourceVersionId": "34000000-0000-4000-8000-000000000003", "retrievedAt": "2026-09-30T18:00:00Z" },
+    { "geneId": "30000000-0000-4000-8000-000000000002", "pathwayId": "31000000-0000-4000-8000-000000000003", "sourceVersionId": "34000000-0000-4000-8000-000000000003", "retrievedAt": "2026-09-30T18:00:00Z" },
+    { "geneId": "30000000-0000-4000-8000-000000000003", "pathwayId": "31000000-0000-4000-8000-000000000004", "sourceVersionId": "34000000-0000-4000-8000-000000000003", "retrievedAt": "2026-09-30T18:00:00Z" },
+    { "geneId": "30000000-0000-4000-8000-000000000003", "pathwayId": "31000000-0000-4000-8000-000000000005", "sourceVersionId": "34000000-0000-4000-8000-000000000003", "retrievedAt": "2026-09-30T18:00:00Z" }
+  ],
+  "publications": [
+    { "id": "33000000-0000-4000-8000-000000000001", "pmid": "24662454", "doi": "10.1097/JTO.0000000000000141", "title": "Relationship between EGFR expression, EGFR mutation status, and the efficacy of chemotherapy plus cetuximab in FLEX study patients with advanced non-small-cell lung cancer.", "authors": "Douillard JY, Pirker R, O'Byrne KJ, Kerr KM, Störkel S, von Heydebreck A, et al.", "journal": "J Thorac Oncol", "pubYear": 2014, "pubDate": "2014 May", "abstractText": null, "sourceVersionId": "34000000-0000-4000-8000-000000000002", "retrievedAt": "2026-09-30T18:00:00Z" },
+    { "id": "33000000-0000-4000-8000-000000000002", "pmid": "16489069", "doi": "10.1158/1078-0432.CCR-05-1029", "title": "The clinical value of somatic TP53 gene mutations in 1,794 patients with breast cancer.", "authors": "Olivier M, Langerød A, Carrieri P, Bergh J, Klaar S, Eyfjord J, et al.", "journal": "Clin Cancer Res", "pubYear": 2006, "pubDate": "2006 Feb 15", "abstractText": null, "sourceVersionId": "34000000-0000-4000-8000-000000000002", "retrievedAt": "2026-09-30T18:00:00Z" },
+    { "id": "33000000-0000-4000-8000-000000000003", "pmid": "31395785", "doi": "10.1126/science.aax3649", "title": "A dominant-negative effect drives selection of TP53 missense mutations in myeloid malignancies.", "authors": "Boettcher S, Miller PG, Sharma R, McConkey M, Leventhal M, Krivtsov AV, et al.", "journal": "Science", "pubYear": 2019, "pubDate": "2019 Aug 9", "abstractText": null, "sourceVersionId": "34000000-0000-4000-8000-000000000002", "retrievedAt": "2026-09-30T18:00:00Z" }
+  ],
+  "evidence": [
+    {
+      "id": "32000000-0000-4000-8000-000000000001",
+      "geneId": "30000000-0000-4000-8000-000000000001",
+      "variantDescriptor": "L858R",
+      "evidenceType": "PROGNOSTIC",
+      "description": "Median survival of patients with EGFR L858R mutation is better than those with wild type EGFR.",
+      "diseaseContext": "Lung Non-small Cell Carcinoma",
+      "certainty": "MODERATE",
+      "certaintyBasis": "SOURCE_MAPPING",
+      "sourceLevel": "B",
+      "sourceDirection": "SUPPORTS",
+      "sourceSignificance": "BETTER_OUTCOME",
+      "sourceRating": 3,
+      "interpretationScope": "SOMATIC",
+      "sourceCode": "CIVIC",
+      "externalId": "EID347",
+      "url": "https://civicdb.org/evidence/347/summary",
+      "publicationId": "33000000-0000-4000-8000-000000000001",
+      "sourceVersionId": "34000000-0000-4000-8000-000000000001",
+      "retrievedAt": "2026-09-30T18:00:00Z",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "32000000-0000-4000-8000-000000000002",
+      "geneId": "30000000-0000-4000-8000-000000000002",
+      "variantDescriptor": "R273H",
+      "evidenceType": "PROGNOSTIC",
+      "description": "Breast cancer patients who harbor R273H mutation have worse overall survival than those with wild type TP53, but have better prognosis than those with R248W mutation.",
+      "diseaseContext": "Breast Cancer",
+      "certainty": "MODERATE",
+      "certaintyBasis": "SOURCE_MAPPING",
+      "sourceLevel": "B",
+      "sourceDirection": "SUPPORTS",
+      "sourceSignificance": "POOR_OUTCOME",
+      "sourceRating": 3,
+      "interpretationScope": "SOMATIC",
+      "sourceCode": "CIVIC",
+      "externalId": "EID397",
+      "url": "https://civicdb.org/evidence/397/summary",
+      "publicationId": "33000000-0000-4000-8000-000000000002",
+      "sourceVersionId": "34000000-0000-4000-8000-000000000001",
+      "retrievedAt": "2026-09-30T18:00:00Z",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "32000000-0000-4000-8000-000000000003",
+      "geneId": "30000000-0000-4000-8000-000000000002",
+      "variantDescriptor": "R273H",
+      "evidenceType": "FUNCTIONAL",
+      "description": "The R273H mutation was used to create isogenic AML cell lines using MOLM13 and K526 lines. R273H/- cells showed resistance to chemotherapeutic agents and failure to induce p21, indicating disruption of p53 function. ChIP assays demonstrated reduced p53 occupation across the genome for most p53 variants tested, including R273H. RNAseq studies determined that a novel gene expression program was not induced in R273H cells at baseline or with DNA damage induced p53 signal activation, and that the signature of gene expression was most similar to that of p53 loss, indicating that R273H mutation does not induce a neomophic p53 function.",
+      "diseaseContext": "Acute Myeloid Leukemia (modelo celular)",
+      "certainty": "LIMITED",
+      "certaintyBasis": "SOURCE_MAPPING",
+      "sourceLevel": "D",
+      "sourceDirection": "DOES_NOT_SUPPORT",
+      "sourceSignificance": "NEOMORPHIC",
+      "sourceRating": 4,
+      "interpretationScope": "SOMATIC",
+      "sourceCode": "CIVIC",
+      "externalId": "EID7530",
+      "url": "https://civicdb.org/evidence/7530/summary",
+      "publicationId": "33000000-0000-4000-8000-000000000003",
+      "sourceVersionId": "34000000-0000-4000-8000-000000000001",
+      "retrievedAt": "2026-09-30T18:00:00Z",
+      "status": "ACTIVE"
+    }
+  ],
+  "cases": [
+    {
+      "id": "20000000-0000-4000-8000-000000000001",
+      "caseCode": "DEMO-001",
+      "organ": "Pulmón",
+      "tumorType": "Adenocarcinoma pulmonar",
+      "diagnosis": "Adenocarcinoma de pulmón (caso ficticio de demostración)",
+      "histologicSubtype": "Adenocarcinoma",
+      "grade": "No especificado",
+      "notes": "Caso ficticio creado para demostrar la interfaz. No corresponde a ningún paciente real.",
+      "createdAt": "2026-01-20T10:00:00Z",
+      "createdBy": "10000000-0000-4000-8000-000000000001",
+      "samples": [
+        {
+          "id": "21000000-0000-4000-8000-000000000001",
+          "label": "Biopsia 1",
+          "sampleType": "BIOPSY",
+          "anatomicSite": "Pulmón, lóbulo superior derecho",
+          "collectionDate": "2026-01-12",
+          "tumorCellularityPct": 40,
+          "necrosisPct": 10,
+          "dnaAvailable": true,
+          "rnaAvailable": true,
+          "dnaQuality": "GOOD",
+          "rnaQuality": "ACCEPTABLE",
+          "observations": "Biopsia con aguja gruesa (demo).",
+          "histology": [
+            { "id": "22000000-0000-4000-8000-000000000001", "diagnosis": "Adenocarcinoma", "histologicSubtype": null, "grade": null, "growthPattern": null, "description": "Hallazgo histológico ficticio para demostración." }
+          ],
+          "ihc": [
+            { "id": "23000000-0000-4000-8000-000000000001", "marker": "TTF-1", "result": "POSITIVE", "percentage": null, "intensity": null, "score": null, "method": "IHQ (demo)", "observations": null },
+            { "id": "23000000-0000-4000-8000-000000000002", "marker": "Napsina A", "result": "POSITIVE", "percentage": null, "intensity": null, "score": null, "method": "IHQ (demo)", "observations": null },
+            { "id": "23000000-0000-4000-8000-000000000003", "marker": "PD-L1", "result": "POSITIVE", "percentage": 70, "intensity": null, "score": "TPS 70%", "method": "IHQ (demo)", "observations": null },
+            { "id": "23000000-0000-4000-8000-000000000004", "marker": "ALK", "result": "NEGATIVE", "percentage": null, "intensity": null, "score": null, "method": "IHQ (demo)", "observations": null }
+          ],
+          "molecularTests": [
+            {
+              "id": "24000000-0000-4000-8000-000000000001",
+              "testType": "NGS_DNA",
+              "laboratory": "Laboratorio de Biología Molecular (demo)",
+              "platform": "Plataforma NGS (demo)",
+              "panelName": "Panel tumor sólido (demo)",
+              "genesAnalyzed": ["ALK", "BRAF", "EGFR", "ERBB2", "KRAS", "MET", "RET", "ROS1", "TP53"],
+              "meanDepth": 1500,
+              "limitOfDetectionPct": 5,
+              "testDate": "2026-01-26",
+              "notes": null,
+              "variants": [
+                { "id": "25000000-0000-4000-8000-000000000001", "geneSymbol": "EGFR", "variantType": "SNV", "transcript": "NM_005228.5", "hgvsC": "c.2573T>G", "hgvsP": "p.L858R", "vaf": 32.5, "coverage": 1420, "origin": "SOMATIC", "classification": "Pendiente de revisión", "classificationSystem": null, "observations": null },
+                { "id": "25000000-0000-4000-8000-000000000002", "geneSymbol": "TP53", "variantType": "SNV", "transcript": "NM_000546.6", "hgvsC": "c.818G>A", "hgvsP": "p.R273H", "vaf": 28.1, "coverage": 1380, "origin": "SOMATIC", "classification": "Pendiente de revisión", "classificationSystem": null, "observations": null }
+              ],
+              "biomarkers": []
+            }
+          ]
+        }
+      ],
+      "timelineEvents": [
+        { "id": "27000000-0000-4000-8000-000000000001", "eventType": "DIAGNOSIS", "eventDate": "2026-01-20", "title": "Diagnóstico anatomopatológico inicial (demo)", "description": null, "sampleId": "21000000-0000-4000-8000-000000000001" }
+      ],
+      "evidenceLinks": [
+        { "variantId": "25000000-0000-4000-8000-000000000001", "evidenceId": "32000000-0000-4000-8000-000000000001", "note": "Enlazada para demostración de trazabilidad." },
+        { "variantId": "25000000-0000-4000-8000-000000000002", "evidenceId": "32000000-0000-4000-8000-000000000002", "note": "Contexto de enfermedad diferente (mama)." },
+        { "variantId": "25000000-0000-4000-8000-000000000002", "evidenceId": "32000000-0000-4000-8000-000000000003", "note": "Modelo celular de LMA." }
+      ],
+      "interpretations": [
+        {
+          "id": "28000000-0000-4000-8000-000000000001",
+          "targetType": "CASE",
+          "targetId": "20000000-0000-4000-8000-000000000001",
+          "statement": "Interpretación ficticia de demostración: se documentan dos variantes somáticas detectadas por NGS. La evidencia pronóstica enlazada para EGFR L858R procede de CPNM; la evidencia enlazada para TP53 R273H procede de cáncer de mama y de modelos celulares de LMA, por lo que su extrapolación a este caso es incierta.",
+          "certainty": "LIMITED",
+          "authorId": "10000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-02-02T09:30:00Z"
+        }
+      ],
+      "comments": [
+        { "id": "29000000-0000-4000-8000-000000000001", "targetType": "SAMPLE", "targetId": "21000000-0000-4000-8000-000000000001", "authorId": "10000000-0000-4000-8000-000000000001", "body": "Comentario ficticio: la celularidad tumoral (40%) se estimó sobre el área marcada para extracción.", "createdAt": "2026-01-22T12:00:00Z" },
+        { "id": "29000000-0000-4000-8000-000000000002", "targetType": "VARIANT", "targetId": "25000000-0000-4000-8000-000000000002", "authorId": "10000000-0000-4000-8000-000000000005", "body": "Comentario ficticio: revisar si la evidencia disponible para TP53 R273H es extrapolable a pulmón.", "createdAt": "2026-01-28T16:45:00Z" }
+      ]
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000002",
+      "caseCode": "DEMO-002",
+      "organ": "Pulmón",
+      "tumorType": "Adenocarcinoma pulmonar",
+      "diagnosis": "Adenocarcinoma de pulmón con estudio longitudinal (caso ficticio)",
+      "histologicSubtype": "Adenocarcinoma",
+      "grade": "No especificado",
+      "notes": "Caso ficticio para demostrar la evolución longitudinal y la comparación Biopsia 1 vs Biopsia 2.",
+      "createdAt": "2025-03-15T10:00:00Z",
+      "createdBy": "10000000-0000-4000-8000-000000000001",
+      "samples": [
+        {
+          "id": "21000000-0000-4000-8000-000000000002",
+          "label": "Biopsia 1",
+          "sampleType": "BIOPSY",
+          "anatomicSite": "Pulmón, lóbulo inferior izquierdo",
+          "collectionDate": "2025-03-10",
+          "tumorCellularityPct": 60,
+          "necrosisPct": 5,
+          "dnaAvailable": true,
+          "rnaAvailable": false,
+          "dnaQuality": "GOOD",
+          "rnaQuality": "NOT_ASSESSED",
+          "observations": null,
+          "histology": [
+            { "id": "22000000-0000-4000-8000-000000000002", "diagnosis": "Adenocarcinoma", "histologicSubtype": null, "grade": null, "growthPattern": null, "description": null }
+          ],
+          "ihc": [
+            { "id": "23000000-0000-4000-8000-000000000005", "marker": "TTF-1", "result": "POSITIVE", "percentage": null, "intensity": null, "score": null, "method": "IHQ (demo)", "observations": null },
+            { "id": "23000000-0000-4000-8000-000000000006", "marker": "PD-L1", "result": "POSITIVE", "percentage": 5, "intensity": null, "score": "TPS 5%", "method": "IHQ (demo)", "observations": null }
+          ],
+          "molecularTests": [
+            {
+              "id": "24000000-0000-4000-8000-000000000002",
+              "testType": "NGS_DNA",
+              "laboratory": "Laboratorio de Biología Molecular (demo)",
+              "platform": "Plataforma NGS (demo)",
+              "panelName": "Panel tumor sólido (demo)",
+              "genesAnalyzed": ["ALK", "BRAF", "EGFR", "ERBB2", "KRAS", "MET", "RET", "ROS1", "TP53"],
+              "meanDepth": 1200,
+              "limitOfDetectionPct": 5,
+              "testDate": "2025-03-24",
+              "notes": null,
+              "variants": [
+                { "id": "25000000-0000-4000-8000-000000000003", "geneSymbol": "EGFR", "variantType": "SNV", "transcript": "NM_005228.5", "hgvsC": "c.2573T>G", "hgvsP": "p.L858R", "vaf": 41.0, "coverage": 1150, "origin": "SOMATIC", "classification": "Pendiente de revisión", "classificationSystem": null, "observations": null }
+              ],
+              "biomarkers": []
+            }
+          ]
+        },
+        {
+          "id": "21000000-0000-4000-8000-000000000003",
+          "label": "Biopsia 2",
+          "sampleType": "BIOPSY",
+          "anatomicSite": "Hígado (lesión metastásica)",
+          "collectionDate": "2026-02-20",
+          "tumorCellularityPct": 30,
+          "necrosisPct": 20,
+          "dnaAvailable": true,
+          "rnaAvailable": true,
+          "dnaQuality": "ACCEPTABLE",
+          "rnaQuality": "POOR",
+          "observations": "Nueva biopsia tras progresión (demo).",
+          "histology": [
+            { "id": "22000000-0000-4000-8000-000000000003", "diagnosis": "Adenocarcinoma metastásico compatible con origen pulmonar", "histologicSubtype": null, "grade": null, "growthPattern": null, "description": null }
+          ],
+          "ihc": [
+            { "id": "23000000-0000-4000-8000-000000000007", "marker": "TTF-1", "result": "POSITIVE", "percentage": null, "intensity": null, "score": null, "method": "IHQ (demo)", "observations": null },
+            { "id": "23000000-0000-4000-8000-000000000008", "marker": "PD-L1", "result": "POSITIVE", "percentage": 20, "intensity": null, "score": "TPS 20%", "method": "IHQ (demo)", "observations": null }
+          ],
+          "molecularTests": [
+            {
+              "id": "24000000-0000-4000-8000-000000000003",
+              "testType": "NGS_DNA",
+              "laboratory": "Laboratorio de Biología Molecular (demo)",
+              "platform": "Plataforma NGS (demo)",
+              "panelName": "Panel tumor sólido (demo)",
+              "genesAnalyzed": ["ALK", "BRAF", "EGFR", "ERBB2", "KRAS", "MET", "RET", "ROS1", "TP53"],
+              "meanDepth": 900,
+              "limitOfDetectionPct": 5,
+              "testDate": "2026-03-05",
+              "notes": null,
+              "variants": [
+                { "id": "25000000-0000-4000-8000-000000000004", "geneSymbol": "EGFR", "variantType": "SNV", "transcript": "NM_005228.5", "hgvsC": "c.2573T>G", "hgvsP": "p.L858R", "vaf": 18.2, "coverage": 880, "origin": "SOMATIC", "classification": "Pendiente de revisión", "classificationSystem": null, "observations": null },
+                { "id": "25000000-0000-4000-8000-000000000005", "geneSymbol": "EGFR", "variantType": "SNV", "transcript": "NM_005228.5", "hgvsC": "c.2369C>T", "hgvsP": "p.T790M", "vaf": 6.4, "coverage": 870, "origin": "SOMATIC", "classification": "Pendiente de revisión", "classificationSystem": null, "observations": "VAF cercana al límite de detección declarado (demo)." }
+              ],
+              "biomarkers": []
+            }
+          ]
+        }
+      ],
+      "timelineEvents": [
+        { "id": "27000000-0000-4000-8000-000000000002", "eventType": "DIAGNOSIS", "eventDate": "2025-03-15", "title": "Diagnóstico inicial (demo)", "description": null, "sampleId": "21000000-0000-4000-8000-000000000002" },
+        { "id": "27000000-0000-4000-8000-000000000003", "eventType": "PROGRESSION", "eventDate": "2026-02-01", "title": "Progresión documentada (demo)", "description": "Evento ficticio de demostración.", "sampleId": null },
+        { "id": "27000000-0000-4000-8000-000000000004", "eventType": "METASTASIS", "eventDate": "2026-02-20", "title": "Lesión hepática biopsiada (demo)", "description": null, "sampleId": "21000000-0000-4000-8000-000000000003" }
+      ],
+      "evidenceLinks": [
+        { "variantId": "25000000-0000-4000-8000-000000000003", "evidenceId": "32000000-0000-4000-8000-000000000001", "note": null }
+      ],
+      "interpretations": [],
+      "comments": []
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000003",
+      "caseCode": "DEMO-003",
+      "organ": "Colon",
+      "tumorType": "Adenocarcinoma colorrectal",
+      "diagnosis": "Adenocarcinoma de colon (caso ficticio de demostración)",
+      "histologicSubtype": "Adenocarcinoma",
+      "grade": "No especificado",
+      "notes": "Caso ficticio sin evidencias enlazadas: sirve para probar la consulta en vivo a CIViC/ClinVar desde la pizarra.",
+      "createdAt": "2026-05-06T10:00:00Z",
+      "createdBy": "10000000-0000-4000-8000-000000000001",
+      "samples": [
+        {
+          "id": "21000000-0000-4000-8000-000000000004",
+          "label": "Pieza quirúrgica",
+          "sampleType": "RESECTION",
+          "anatomicSite": "Colon derecho",
+          "collectionDate": "2026-05-04",
+          "tumorCellularityPct": 55,
+          "necrosisPct": 15,
+          "dnaAvailable": true,
+          "rnaAvailable": true,
+          "dnaQuality": "GOOD",
+          "rnaQuality": "GOOD",
+          "observations": null,
+          "histology": [
+            { "id": "22000000-0000-4000-8000-000000000004", "diagnosis": "Adenocarcinoma", "histologicSubtype": null, "grade": null, "growthPattern": null, "description": null }
+          ],
+          "ihc": [
+            { "id": "23000000-0000-4000-8000-000000000009", "marker": "MLH1", "result": "NEGATIVE", "percentage": null, "intensity": null, "score": null, "method": "IHQ (demo)", "observations": "Pérdida de expresión nuclear en células tumorales (demo)." },
+            { "id": "23000000-0000-4000-8000-000000000010", "marker": "PMS2", "result": "NEGATIVE", "percentage": null, "intensity": null, "score": null, "method": "IHQ (demo)", "observations": "Pérdida de expresión nuclear en células tumorales (demo)." },
+            { "id": "23000000-0000-4000-8000-000000000011", "marker": "MSH2", "result": "POSITIVE", "percentage": null, "intensity": null, "score": null, "method": "IHQ (demo)", "observations": null },
+            { "id": "23000000-0000-4000-8000-000000000012", "marker": "MSH6", "result": "POSITIVE", "percentage": null, "intensity": null, "score": null, "method": "IHQ (demo)", "observations": null }
+          ],
+          "molecularTests": [
+            {
+              "id": "24000000-0000-4000-8000-000000000004",
+              "testType": "NGS_DNA",
+              "laboratory": "Laboratorio de Biología Molecular (demo)",
+              "platform": "Plataforma NGS (demo)",
+              "panelName": "Panel colorrectal (demo)",
+              "genesAnalyzed": ["BRAF", "KRAS", "NRAS", "PIK3CA", "TP53"],
+              "meanDepth": 1100,
+              "limitOfDetectionPct": 5,
+              "testDate": "2026-05-20",
+              "notes": null,
+              "variants": [
+                { "id": "25000000-0000-4000-8000-000000000006", "geneSymbol": "BRAF", "variantType": "SNV", "transcript": "NM_004333.6", "hgvsC": "c.1799T>A", "hgvsP": "p.V600E", "vaf": 22.4, "coverage": 1010, "origin": "SOMATIC", "classification": "Pendiente de revisión", "classificationSystem": null, "observations": null }
+              ],
+              "biomarkers": [
+                { "id": "26000000-0000-4000-8000-000000000001", "biomarkerType": "MSI", "name": "Inestabilidad de microsatélites", "valueNumeric": null, "valueText": "MSI-H (demo)", "unit": null, "observations": null },
+                { "id": "26000000-0000-4000-8000-000000000002", "biomarkerType": "TMB", "name": "Carga mutacional tumoral", "valueNumeric": 38.5, "valueText": null, "unit": "mut/Mb", "observations": null }
+              ]
+            }
+          ]
+        }
+      ],
+      "timelineEvents": [
+        { "id": "27000000-0000-4000-8000-000000000005", "eventType": "SURGERY", "eventDate": "2026-05-04", "title": "Resección quirúrgica (demo)", "description": null, "sampleId": "21000000-0000-4000-8000-000000000004" }
+      ],
+      "evidenceLinks": [],
+      "interpretations": [],
+      "comments": []
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+ "result": {
+  "uids": [
+   "16609"
+  ],
+  "16609": {
+   "uid": "16609",
+   "accession": "VCV000016609",
+   "title": "NM_005228.5(EGFR):c.2573T>G (p.Leu858Arg)",
+   "protein_change": "L858R, L591R, L805R, L813R",
+   "germline_classification": {
+    "description": "drug response",
+    "last_evaluated": "2021/03/24 00:00",
+    "review_status": "reviewed by expert panel",
+    "fda_recognized_database": "",
+    "trait_set": [
+     {
+      "trait_name": "gefitinib response - Efficacy"
+     }
+    ]
+   },
+   "clinical_impact_classification": {
+    "description": "Tier I - Strong",
+    "last_evaluated": "2018/02/23 00:00",
+    "review_status": "criteria provided, multiple submitters",
+    "fda_recognized_database": "",
+    "trait_set": [
+     {
+      "trait_name": "Non-small cell lung carcinoma"
+     }
+    ]
+   },
+   "oncogenicity_classification": {
+    "description": "Oncogenic",
+    "last_evaluated": "2025/03/04 00:00",
+    "review_status": "criteria provided, single submitter",
+    "fda_recognized_database": "",
+    "trait_set": [
+     {
+      "trait_name": "Neoplasm"
+     }
+    ]
+   },
+   "genes": [
+    {
+     "symbol": "EGFR",
+     "geneid": "1956",
+     "strand": "+",
+     "source": "submitted"
+    }
+   ]
+  }
+ }
+}

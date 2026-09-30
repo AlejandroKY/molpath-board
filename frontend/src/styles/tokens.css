@@ -1,0 +1,93 @@
+/* MolPath Board · tokens de diseño
+   Estética: instrumento científico. Papel neutro, tinta azul-pizarra, un único acento y una
+   escala de certeza semántica. Nada de dashboards multicolor. */
+
+:root {
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --bg: #f5f5f2;
+  --bg-sunken: #ecece7;
+  --surface: #ffffff;
+  --surface-2: #fafaf8;
+  --line: #deded7;
+  --line-strong: #c7c7be;
+  --ink: #1b2126;
+  --ink-2: #3f4a53;
+  --ink-3: #6b757d;
+  --ink-4: #98a0a6;
+
+  --accent: #1f4e79;
+  --accent-ink: #ffffff;
+  --accent-soft: #e5edf5;
+  --focus: #2f6fb0;
+
+  /* capas de procedencia */
+  --layer-case: #1f4e79;
+  --layer-case-soft: #eaf0f6;
+  --layer-knowledge: #5b4a8b;
+  --layer-knowledge-soft: #f1eef8;
+  --layer-reasoning: #8a5a12;
+  --layer-reasoning-soft: #fbf4e6;
+
+  /* escala de certeza */
+  --c-strong: #1e6b4b;
+  --c-moderate: #4f7f3a;
+  --c-limited: #a8741a;
+  --c-contradictory: #b3261e;
+  --c-insufficient: #7a7f86;
+  --c-unknown: #a3a8ad;
+
+  --ok: #1e6b4b;
+  --warn: #a8741a;
+  --danger: #b3261e;
+  --danger-soft: #fbeceb;
+  --warn-soft: #fbf3e2;
+
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow-1: 0 1px 2px rgba(20, 30, 40, 0.06);
+  --shadow-2: 0 6px 24px rgba(20, 30, 40, 0.12);
+  --sidebar-w: 232px;
+  --topbar-h: 56px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #111416;
+    --bg-sunken: #0c0e10;
+    --surface: #181c1f;
+    --surface-2: #1d2226;
+    --line: #2b3237;
+    --line-strong: #3a434a;
+    --ink: #e7eaec;
+    --ink-2: #c3c9ce;
+    --ink-3: #939ba2;
+    --ink-4: #6d757c;
+    --accent: #7fb0de;
+    --accent-ink: #0e1a26;
+    --accent-soft: #1b2a38;
+    --focus: #8fc0ee;
+    --layer-case: #7fb0de;
+    --layer-case-soft: #17232e;
+    --layer-knowledge: #b3a3e0;
+    --layer-knowledge-soft: #221e30;
+    --layer-reasoning: #e0b060;
+    --layer-reasoning-soft: #2a2215;
+    --c-strong: #5fbf8f;
+    --c-moderate: #93c27a;
+    --c-limited: #e0ae52;
+    --c-contradictory: #f07a70;
+    --c-insufficient: #a3a9af;
+    --c-unknown: #7d848a;
+    --ok: #5fbf8f;
+    --warn: #e0ae52;
+    --danger: #f07a70;
+    --danger-soft: #2d1716;
+    --warn-soft: #2a2213;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 8px 28px rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+  }
+}
