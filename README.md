@@ -13,6 +13,13 @@ MolPath Board es una plataforma web para integrar y visualizar información de a
 5. **discusión multidisciplinaria** sobre cualquier elemento, con historial de ediciones;
 6. **snapshots científicos** inmutables y verificables (SHA-256) para comparar «qué sabíamos» con «qué sabemos».
 
+### Experiencia de uso (rediseño UX)
+
+- **Resumen molecular del caso** al abrir cada caso, con «Qué cambió» (desde el último snapshot) y «Preguntas abiertas» (observaciones objetivas del sistema).
+- **Pizarra**: vista *Ruta principal* / *Ver todo*, *Enfocar* un nodo, *Explicar esta ruta*, leyenda en menús, detalle según zoom y, en móvil, panel inferior deslizable.
+- **Timeline visual** con evolución de VAF, **modo presentación** para Molecular Tumor Board (`/cases/:id/present`) y atajos de teclado (`?` los muestra).
+- Detalles en [UX_REDESIGN_PLAN.md](UX_REDESIGN_PLAN.md) y [UX_CHANGELOG.md](UX_CHANGELOG.md).
+
 MolPath **no** diagnostica, **no** recomienda tratamientos y **no** inventa evidencia ni PMIDs. En esta fase sólo trabaja con **casos ficticios**.
 
 ---
@@ -97,7 +104,7 @@ Nunca se guardan claves en el código: `.env` está en `.gitignore`.
 
 ```bash
 cd backend && ./mvnw test      # 59 tests: unitarios, parsers con fixtures reales, API contra PostgreSQL embebido
-cd frontend && npm test        # 21 tests: dominio, gateway demo y flujo completo en la UI
+cd frontend && npm test        # 34 tests: dominio, gateway demo, pizarra, móvil, presentación y flujo completo en la UI
 ```
 
 El flujo exigido — crear caso → muestra → IHQ → estudio molecular → variante → verla en la pizarra → crear snapshot — está cubierto en ambos lados (`ClinicalFlowApiTest` y `src/app/flow.test.tsx`).

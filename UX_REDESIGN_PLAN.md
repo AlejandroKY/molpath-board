@@ -53,6 +53,9 @@ Se reutiliza todo lo existente (gateway, React Query, `boardGraph`, `sampleCompa
 
 ## 3. Prioridades y orden
 
+**Estado:** fases 1–12 implementadas (ver [UX_CHANGELOG.md](UX_CHANGELOG.md)). 34 tests de frontend en verde.
+
+
 1. Auditoría + este plan.
 2. `MolecularCaseSummary` (+ lógica pura y tests).
 3. Pizarra de escritorio refinada (workspace, leyenda en menús, jerarquía).

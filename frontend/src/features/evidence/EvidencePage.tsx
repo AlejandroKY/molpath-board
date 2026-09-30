@@ -6,6 +6,8 @@ import { useGateway } from '../../data/GatewayProvider';
 import { WhyItMatters } from '../../education/WhyItMatters';
 import { CERTAINTY_LABEL, CERTAINTY_ORDER, EVIDENCE_TYPE_LABEL, SCOPE_LABEL, SOURCE_LABEL, STATUS_LABEL, formatDate } from '../../domain/labels';
 import type { Certainty, EvidenceFilter, EvidenceStatus, EvidenceType, InterpretationScope } from '../../domain/types';
+import { EvidenceSummary, ResponsiveTable } from '../../components/scientific';
+import { summarizeEvidence } from '../../domain/caseInsights';
 import { ClinVarPanel, EvidenceCard, EvidenceHistory, ExternalEvidenceFinder, ReclassifyEvidence } from './knowledgeComponents';
 
 export function EvidencePage() {
@@ -40,25 +42,27 @@ export function EvidencePage() {
             <Field label="Texto" className="span-all"><input value={filter.q} onChange={set('q')} placeholder="descripción, contexto, identificador" /></Field>
           </div>
           <ErrorBox error={list.error} />
-          {list.isLoading ? <Loading /> : list.data?.items.length === 0 ? <Empty>No hay evidencias con estos filtros.</Empty> : (
-            <div className="table-wrap">
-              <table className="data">
-                <thead><tr><th>Gen / variante</th><th>Tipo</th><th>Contexto</th><th>Fuente</th><th>Certeza</th><th>Estado</th><th>Consultado</th></tr></thead>
-                <tbody>
-                  {list.data?.items.map((e) => (
-                    <tr key={e.id} className="clickable" onClick={() => setParams({ id: e.id })}>
-                      <td className="mono">{e.geneSymbol} {e.variantDescriptor}</td>
-                      <td>{EVIDENCE_TYPE_LABEL[e.evidenceType]}</td>
-                      <td className="small">{e.diseaseContext ?? '—'}</td>
-                      <td className="small">{SOURCE_LABEL[e.sourceCode] ?? e.sourceCode} <span className="mono">{e.externalId}</span></td>
-                      <td><CertaintyBadge certainty={e.certainty} basis={e.certaintyBasis} short /></td>
-                      <td className="small">{STATUS_LABEL[e.status]}</td>
-                      <td className="small muted">{formatDate(e.retrievedAt)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          {list.isLoading ? <Loading /> : list.data?.items.length === 0 ? <Empty>No hay evidencias con estos filtros. Pruebe a quitar filtros o consulte las fuentes externas.</Empty> : (
+            <>
+              <div className="card-body" style={{ borderBottom: '1px solid var(--line)' }}>
+                <EvidenceSummary data={summarizeEvidence(list.data?.items ?? [])} title={`Resumen de esta página (${list.data?.items.length ?? 0} de ${list.data?.totalItems ?? 0})`} />
+              </div>
+              <ResponsiveTable
+                caption="Evidencias"
+                rows={list.data?.items ?? []}
+                rowKey={(e) => e.id}
+                onRowClick={(e) => setParams({ id: e.id })}
+                columns={[
+                  { key: 'gv', header: 'Gen / variante', primary: true, cell: (e) => <span className="mono">{e.geneSymbol} {e.variantDescriptor}</span> },
+                  { key: 'type', header: 'Tipo', cell: (e) => EVIDENCE_TYPE_LABEL[e.evidenceType] },
+                  { key: 'cert', header: 'Certeza', cell: (e) => <CertaintyBadge certainty={e.certainty} basis={e.certaintyBasis} short /> },
+                  { key: 'src', header: 'Fuente', cell: (e) => <span className="small">{SOURCE_LABEL[e.sourceCode] ?? e.sourceCode} <span className="mono">{e.externalId}</span></span> },
+                  { key: 'ctx', header: 'Contexto', cell: (e) => <span className="small">{e.diseaseContext ?? '—'}</span> },
+                  { key: 'st', header: 'Estado', hideOnCard: true, cell: (e) => <span className="small">{STATUS_LABEL[e.status]}</span> },
+                  { key: 'd', header: 'Consultado', hideOnCard: true, cell: (e) => <span className="small muted">{formatDate(e.retrievedAt)}</span> },
+                ]}
+              />
+            </>
           )}
           <Pager page={page} totalPages={list.data?.totalPages ?? 0} onPage={setPage} />
         </div>

@@ -16,19 +16,19 @@ import { SearchPage } from '../features/search/SearchPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { CaseSnapshotsPage, SnapshotComparePage, SnapshotsPage } from '../features/snapshots/SnapshotPages';
 import { TimelinePage } from '../features/timeline/TimelinePage';
-import { PresentationPage } from '../features/present/PresentationPage';
 import { Layout, NotFound } from './Layout';
 import { LoginScreen } from './LoginScreen';
 
 // La pizarra (React Flow + dagre) se carga bajo demanda.
 const BoardPage = lazy(() => import('../features/board/BoardPage'));
+const PresentationPage = lazy(() => import('../features/present/PresentationPage').then((m) => ({ default: m.PresentationPage })));
 
 function Routed() {
   const { session } = useGateway();
   if (!session) return <LoginScreen />;
   return (
     <Routes>
-      <Route path="cases/:caseId/present" element={<PresentationPage />} />
+      <Route path="cases/:caseId/present" element={<Suspense fallback={<Loading label="Preparando la presentación…" />}><PresentationPage /></Suspense>} />
       <Route element={<Layout />}>
         <Route index element={<DashboardPage />} />
         <Route path="search" element={<SearchPage />} />
