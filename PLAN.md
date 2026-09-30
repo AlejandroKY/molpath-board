@@ -47,46 +47,50 @@ Orden ajustado respecto a la propuesta original (ver ADR-015): las entidades cl�
 > **Verificación fases 1–4:** 59 tests de backend en verde (unitarios, parsers con fixtures reales, API contra PostgreSQL embebido). Prueba de humo en vivo contra CIViC, ClinVar, Reactome y PubMed superada.
 
 ## Fase 5 · Frontend base
-- [ ] Vite + React + TS, router, layout (sidebar, breadcrumbs, búsqueda global)
-- [ ] Sistema de diseño (tokens, tipografía, componentes)
-- [ ] `MolPathGateway` con `HttpGateway` y `BrowserDemoGateway`
-- [ ] Sesión (selector de usuario demo / JWT)
+- [x] Vite + React + TS, router, layout (sidebar, breadcrumbs, búsqueda global)
+- [x] Sistema de diseño (tokens, tipografía, componentes)
+- [x] `MolPathGateway` con `HttpGateway` y `BrowserDemoGateway`
+- [x] Sesión (selector de usuario demo / JWT)
 
 ## Fase 6 · Casos y datos clínicos (frontend)
-- [ ] Listado paginado, creación y edición de casos
-- [ ] Muestras, histología, IHQ
-- [ ] Estudios moleculares, variantes, biomarcadores
+- [x] Listado paginado, creación y edición de casos
+- [x] Muestras, histología, IHQ
+- [x] Estudios moleculares, variantes, biomarcadores
 
 ## Fase 7 · Pizarra Molecular Viva
-- [ ] Núcleo `buildBoardGraph` (capas caso/conocimiento/razonamiento)
-- [ ] React Flow + layout dagre, selección, panel de detalle, expandir/colapsar grupos, filtros de capa
-- [ ] Incertidumbre en nodos y aristas + detección de contradicciones
-- [ ] Trazabilidad ("Ver fuente") en el panel
-- [ ] Comentarios sobre nodos desde el panel
-- [ ] Crear snapshot desde la pizarra (incluye estado del grafo)
+- [x] Núcleo `buildBoardGraph` (capas caso/conocimiento/razonamiento)
+- [x] React Flow + layout dagre, selección, panel de detalle, expandir/colapsar grupos, filtros de capa
+- [x] Incertidumbre en nodos y aristas + detección de contradicciones
+- [x] Trazabilidad ("Ver fuente") en el panel
+- [x] Comentarios sobre nodos desde el panel
+- [x] Crear snapshot desde la pizarra (incluye estado del grafo)
 
 ## Fase 8 · Evidencias y literatura (frontend)
-- [ ] Biblioteca de evidencias paginada con filtros
-- [ ] Consulta CIViC / ClinVar e importación con enlace a variante
-- [ ] Literatura: importar por PMID, ficha con abstract
-- [ ] Pathways desde Reactome
+- [x] Biblioteca de evidencias paginada con filtros
+- [x] Consulta CIViC / ClinVar e importación con enlace a variante
+- [x] Literatura: importar por PMID, ficha con abstract
+- [x] Pathways desde Reactome
 
 ## Fase 9 · Timeline y comparación longitudinal
-- [ ] Vista timeline
-- [ ] Comparación muestra vs muestra (variantes, VAF, IHQ, muestra, evidencia)
+- [x] Vista timeline
+- [x] Comparación muestra vs muestra (variantes, VAF, IHQ, muestra, evidencia)
 
 ## Fase 10 · Discusión multidisciplinaria
-- [ ] Hilo por caso y por elemento, edición con historial, feed global
+- [x] Hilo por caso y por elemento, edición con historial, feed global
 
 ## Fase 11 · Snapshots científicos
-- [ ] Listado y comparación "qué sabíamos" vs "qué sabemos"
+- [x] Listado y comparación "qué sabíamos" vs "qué sabemos"
 
 ## Fase 12 · Búsqueda, aprendizaje, calidad
-- [ ] Búsqueda global tipada
-- [ ] Modo aprendizaje "¿Por qué importa esto?" (contenido educativo)
-- [ ] Tests de componentes y flujo completo
-- [ ] Revisión de seguridad y UX
-- [ ] README y documentación final
+- [x] Búsqueda global tipada
+- [x] Modo aprendizaje "¿Por qué importa esto?" (contenido educativo)
+- [x] Tests de componentes y flujo completo
+- [x] Revisión de seguridad y UX
+- [x] README y documentación final
+
+> **Verificación fases 5–12:** 21 tests de frontend en verde (dominio, gateway demo y flujo completo UI: caso → muestra → IHQ → estudio → variante → pizarra → snapshot). `tsc` sin errores y build de producción correcto.
+>
+> **Limitaciones conocidas:** relaciones gen→gen de cascadas pendientes de fuente verificada; OncoKB desactivado por licencia; autenticación con login de desarrollo (IdP real pendiente); en modo demo los datos son locales a cada navegador.
 
 ## Fase 13 · Publicación
 - [ ] Repositorio en GitHub

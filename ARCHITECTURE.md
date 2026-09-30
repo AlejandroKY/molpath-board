@@ -95,12 +95,12 @@ Documentación completa e interactiva en `/swagger-ui.html` (OpenAPI en `/v3/api
 | Muestras | `GET/POST /api/cases/{id}/samples`, `PUT /api/samples/{id}` |
 | Histología / IHQ | `POST /api/samples/{id}/histology`, `PUT /api/histology/{id}`, `POST /api/samples/{id}/ihc`, `PUT/DELETE /api/ihc/{id}` |
 | Molecular | `POST /api/samples/{id}/molecular-tests`, `PUT /api/molecular-tests/{id}`, `POST /api/molecular-tests/{id}/variants`, `PUT /api/variants/{id}`, `POST /api/molecular-tests/{id}/biomarkers`, `GET /api/cases/{id}/variants` |
-| Evidencia | `GET/POST /api/evidence`, `GET/PUT /api/evidence/{id}`, `GET /api/cases/{id}/evidence`, `POST /api/variants/{id}/evidence-links`, `DELETE /api/variants/{id}/evidence-links/{evidenceId}` |
+| Evidencia | `GET/POST /api/evidence`, `GET /api/evidence/{id}`, `GET /api/evidence/{id}/history`, `PUT /api/evidence/{id}/classification`, `GET /api/cases/{id}/evidence`, `POST /api/variants/{id}/evidence-links`, `DELETE /api/variants/{id}/evidence-links/{evidenceId}` |
 | Publicaciones | `GET /api/publications`, `GET /api/publications/{pmid}`, `POST /api/publications/import` |
 | Pathways | `GET /api/genes/{symbol}`, `POST /api/genes/{symbol}/pathways/import` |
 | Externos | `GET /api/external/providers`, `GET /api/external/evidence?source=&gene=&variant=`, `POST /api/external/evidence/import`, `GET /api/external/clinvar?gene=&variant=`, `GET /api/external/pathways?gene=` |
 | Timeline | `GET /api/cases/{id}/timeline`, `POST /api/cases/{id}/timeline-events` |
-| Interpretación | `POST /api/cases/{id}/interpretations` |
+| Interpretación | `GET/POST /api/cases/{id}/interpretations` |
 | Discusión | `GET /api/comments?caseId=`, `POST /api/cases/{id}/comments`, `PUT /api/comments/{id}`, `GET /api/comments/{id}/revisions` |
 | Snapshots | `GET/POST /api/cases/{id}/snapshots`, `GET /api/snapshots/{id}`, `GET /api/snapshots` |
 | Búsqueda | `GET /api/search?q=&limit=` |

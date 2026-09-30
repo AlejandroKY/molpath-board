@@ -41,7 +41,7 @@ Formato: **Decisión · Opciones consideradas · Motivo**. Las decisiones se añ
 
 ## ADR-006 · Snapshots como documentos inmutables con hash
 
-- **Decisión:** un snapshot almacena el agregado completo del caso (incluidas evidencias, publicaciones y versiones de fuentes) en una columna `jsonb`, con `schema_version` y `content_sha256`. No existe endpoint de modificación de snapshots.
+- **Decisión:** un snapshot almacena el agregado completo del caso (incluidas evidencias, publicaciones y versiones de fuentes) como JSON en una columna `text` (no `jsonb`, que reordena claves e impediría verificar el hash byte a byte), con `schema_version` y `content_sha256`. No existe endpoint de modificación de snapshots.
 - **Opciones:** tablas relacionales versionadas (temporal tables) para cada entidad.
 - **Motivo:** un documento congelado es la representación más fiel de "qué sabíamos en esa fecha", es trivial de verificar (hash) y no se ve afectado por futuras migraciones del esquema relacional. Coste: más almacenamiento, aceptable.
 

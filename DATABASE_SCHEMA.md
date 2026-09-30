@@ -59,8 +59,8 @@ erDiagram
     TIMELINE_EVENT { uuid id PK; uuid case_id FK; enum event_type; date event_date; string title; uuid sample_id FK }
     DISCUSSION_COMMENT { uuid id PK; uuid case_id FK; enum target_type; string target_id; uuid author_id FK; string author_role; text body; timestamptz edited_at }
     DISCUSSION_COMMENT_REVISION { uuid id PK; uuid comment_id FK; text body; timestamptz revised_at }
-    CASE_SNAPSHOT { uuid id PK; uuid case_id FK; string label; int schema_version; jsonb content; string content_sha256 }
-    AUDIT_EVENT { bigint id PK; uuid actor_id; string action; string entity_type; string entity_id; jsonb before_state; jsonb after_state }
+    CASE_SNAPSHOT { uuid id PK; uuid case_id FK; string label; int schema_version; text content; string content_sha256 }
+    AUDIT_EVENT { bigint id PK; uuid actor_id; string action; string entity_type; string entity_id; text before_state; text after_state }
 ```
 
 ## Decisiones de modelado
@@ -98,10 +98,10 @@ erDiagram
 
 ### Historial
 - `tumor_case`, `sample`, `evidence` tienen `version` para bloqueo optimista (evita que dos usuarios se pisen).
-- `audit_event` guarda antes/después en `jsonb`.
+- `audit_event` guarda antes/después como JSON (`text`).
 - `discussion_comment_revision` conserva cada versión anterior de un comentario.
 - `interpretation` no se actualiza: se sustituye (`supersedes_id`, `status = SUPERSEDED`).
-- `case_snapshot.content` es inmutable (no existe `UPDATE` en la aplicación) y lleva `content_sha256`.
+- `case_snapshot.content` es inmutable (no existe `UPDATE` en la aplicación, entidad `@Immutable`) y lleva `content_sha256`. Se guarda como `text` y no `jsonb` porque `jsonb` reordena claves y rompería la verificación byte a byte del hash.
 
 ### Extensibilidad
 `biomarker_result.biomarker_type` admite TMB, MSI, HRD, firmas mutacionales y expresión RNA; `value_numeric`/`value_text`/`unit` cubren valores cuantitativos y categóricos sin nuevas tablas.
