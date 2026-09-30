@@ -121,6 +121,18 @@ export const GLOSSARY: GlossaryEntry[] = [
     short: 'Germinal: presente desde el nacimiento en todas las células. Somático: adquirido en el tumor.',
     why: 'Tienen implicaciones muy distintas, por eso MolPath mantiene separadas las interpretaciones germinales (p. ej. ClinVar germinal) de las somáticas/oncológicas.',
   },
+  {
+    id: 'snapshot',
+    term: 'Snapshot científico',
+    short: 'Fotografía inmutable del estado del caso y de su evidencia en una fecha concreta.',
+    why: 'El conocimiento cambia: aparecen publicaciones, se reclasifican evidencias y se actualizan las bases de datos. Un snapshot permite comparar «qué sabíamos entonces» con «qué sabemos ahora» sin sobrescribir la historia. Su huella SHA-256 permite comprobar que no se ha modificado.',
+  },
+  {
+    id: 'evidence',
+    term: 'Evidencia científica trazable',
+    short: 'Registro de una fuente externa (p. ej. CIViC, ClinVar) que asocia una alteración con un efecto en un contexto concreto.',
+    why: 'Cada registro indica de dónde procede, en qué contexto de enfermedad se observó y con qué nivel. Un registro obtenido en otro tipo tumoral o en modelos celulares no se traslada automáticamente a un caso.',
+  },
 ];
 
 export const GLOSSARY_BY_ID = Object.fromEntries(GLOSSARY.map((g) => [g.id, g]));

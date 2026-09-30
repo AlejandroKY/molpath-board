@@ -43,6 +43,8 @@ export interface BoardNode {
   title: string;
   subtitle: string | null;
   meta: string | null;
+  /** Detalle adicional para zoom cercano (sólo datos registrados). */
+  extra: string | null;
   certainty: Certainty | null;
   contradiction: boolean;
   inactive: boolean;
@@ -116,13 +118,14 @@ export function buildBoardGraph(board: CaseBoard, options: BuildOptions = {}): B
   const seen = new Set<string>();
   const comments = board.commentCounts ?? {};
 
-  const addNode = (n: Omit<BoardNode, 'layer' | 'commentCount' | 'contradiction' | 'inactive' | 'certainty' | 'meta'> &
-    Partial<Pick<BoardNode, 'contradiction' | 'inactive' | 'certainty' | 'meta'>>, targetType: TargetType) => {
+  const addNode = (n: Omit<BoardNode, 'layer' | 'commentCount' | 'contradiction' | 'inactive' | 'certainty' | 'meta' | 'extra'> &
+    Partial<Pick<BoardNode, 'contradiction' | 'inactive' | 'certainty' | 'meta' | 'extra'>>, targetType: TargetType) => {
     if (seen.has(n.id)) return;
     seen.add(n.id);
     nodes.push({
       certainty: null,
       meta: null,
+      extra: null,
       contradiction: false,
       inactive: false,
       ...n,
@@ -150,6 +153,7 @@ export function buildBoardGraph(board: CaseBoard, options: BuildOptions = {}): B
       meta: [formatDate(s.collectionDate), s.tumorCellularityPct != null ? `celularidad ${formatPct(s.tumorCellularityPct)}` : null]
         .filter(Boolean)
         .join(' · '),
+      extra: [s.necrosisPct != null ? `necrosis ${formatPct(s.necrosisPct)}` : null, s.dnaAvailable ? 'ADN disponible' : null, s.rnaAvailable ? 'ARN disponible' : null].filter(Boolean).join(' · ') || null,
     }, 'SAMPLE');
     addEdge(rootId, id, 'structure');
   }
@@ -173,6 +177,7 @@ export function buildBoardGraph(board: CaseBoard, options: BuildOptions = {}): B
       title: TEST_TYPE_LABEL[t.testType],
       subtitle: t.panelName,
       meta: [formatDate(t.testDate), t.limitOfDetectionPct != null ? `LoD ${formatPct(t.limitOfDetectionPct)}` : null].filter(Boolean).join(' · '),
+      extra: [t.meanDepth != null ? `${t.meanDepth}x` : null, t.genesAnalyzed.length ? `${t.genesAnalyzed.length} genes` : null].filter(Boolean).join(' · ') || null,
     }, 'MOLECULAR_TEST');
     addEdge(`sample:${t.sampleId}`, id, 'structure');
   }
@@ -192,6 +197,7 @@ export function buildBoardGraph(board: CaseBoard, options: BuildOptions = {}): B
       title: variantLabel(v),
       subtitle: [v.vaf != null ? `VAF ${formatPct(v.vaf)}` : null, VARIANT_TYPE_LABEL[v.variantType], ORIGIN_LABEL[v.origin]].filter(Boolean).join(' · '),
       meta: linked.length ? `${linked.length} evidencia(s) enlazada(s)` : 'Sin evidencia enlazada',
+      extra: [v.transcript, v.hgvsC, v.coverage != null ? `cobertura ${v.coverage}x` : null].filter(Boolean).join(' · ') || null,
       contradiction: linked.some((e) => e && contradictory.has(e.id)),
     }, 'VARIANT');
     addEdge(`test:${v.molecularTestId}`, id, 'structure');
@@ -255,6 +261,7 @@ export function buildBoardGraph(board: CaseBoard, options: BuildOptions = {}): B
         certainty: e.certainty,
         contradiction: contradictory.has(e.id),
         inactive: e.status !== 'ACTIVE',
+        extra: [e.pmid ? `PMID ${e.pmid}` : null, e.sourceVersionLabel].filter(Boolean).join(' · ') || null,
       }, 'EVIDENCE');
       addEdge(parent, eid, 'evidence', { certainty: e.certainty, label: parent.startsWith('variant:') ? CERTAINTY_SHORT[e.certainty] : null });
       const pub = e.publicationId ? pubById.get(e.publicationId) : undefined;

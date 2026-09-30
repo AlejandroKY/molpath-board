@@ -1,11 +1,13 @@
 import { useState } from 'react';
+import { Icon } from '../../components/Icon';
+import { CertaintyGlyph, DataOriginBadge, EmptyState, EvidenceSummary } from '../../components/scientific';
 import { CertaintyBadge, SourceButton } from '../../components/ui';
 import { WhyItMatters } from '../../education/WhyItMatters';
-import { certaintyDistribution, detectContradictions } from '../../domain/certainty';
+import { evidenceOfVariant, explainNode, summarizeEvidence } from '../../domain/caseInsights';
+import { detectContradictions } from '../../domain/certainty';
 import { KIND_LABEL, commentTarget, type BoardGraph, type BoardNode } from '../../domain/boardGraph';
 import {
-  CERTAINTY_ORDER,
-  CERTAINTY_SHORT,
+  EVIDENCE_TYPE_LABEL,
   IHC_INTENSITY_LABEL,
   IHC_RESULT_LABEL,
   ORIGIN_LABEL,
@@ -23,12 +25,9 @@ import type { CaseBoard } from '../../domain/types';
 import { CommentThread } from '../discussion/CommentThread';
 import { ClinVarPanel, EvidenceCard, EvidenceHistory, ExternalEvidenceFinder, PathwayImporter, ReclassifyEvidence } from '../evidence/knowledgeComponents';
 import { InterpretationDialog } from '../cases/forms';
+import { PublicationActions, VariantActions } from '../cases/QuickActions';
 
-const LAYER_TEXT = {
-  case: 'Dato del caso (ficticio)',
-  knowledge: 'Conocimiento de fuente externa',
-  reasoning: 'Razonamiento humano documentado',
-} as const;
+export type PanelTab = 'detail' | 'sources' | 'discussion';
 
 interface Props {
   board: CaseBoard;
@@ -38,76 +37,112 @@ interface Props {
   hiddenCount: number;
   onToggle: () => void;
   onSelect: (id: string) => void;
+  focused: boolean;
+  onFocus: () => void;
+  initialTab?: PanelTab;
+  readOnly?: boolean;
 }
 
-export function NodePanel({ board, graph, node, collapsed, hiddenCount, onToggle, onSelect }: Props) {
-  const [tab, setTab] = useState<'detail' | 'sources' | 'discussion'>('detail');
+function originDetail(board: CaseBoard, node: BoardNode): string | undefined {
+  if (node.kind === 'evidence') {
+    const e = board.evidence.find((x) => x.id === node.entityId);
+    return e ? `${SOURCE_LABEL[e.sourceCode] ?? e.sourceCode}${e.externalId ? ` ${e.externalId}` : ''}` : undefined;
+  }
+  if (node.kind === 'pathway') return 'Reactome';
+  if (node.kind === 'publication') return 'PubMed';
+  if (node.kind === 'gene') return 'NCBI Gene / Reactome';
+  if (node.kind === 'interpretation') {
+    const i = board.interpretations.find((x) => x.id === node.entityId);
+    return i ? `${i.authorName ?? ''} · ${ROLE_LABEL[i.authorRole]} · ${formatDate(i.createdAt)}` : undefined;
+  }
+  return undefined;
+}
+
+export function NodePanel({ board, graph, node, collapsed, hiddenCount, onToggle, onSelect, focused, onFocus, initialTab = 'detail', readOnly }: Props) {
+  const [tab, setTab] = useState<PanelTab>(initialTab);
   const [interpreting, setInterpreting] = useState(false);
+  const [explain, setExplain] = useState(false);
   const children = graph.edges.filter((e) => e.source === node.id).map((e) => graph.nodes.find((n) => n.id === e.target)!).filter(Boolean);
   const parents = graph.edges.filter((e) => e.target === node.id).map((e) => graph.nodes.find((n) => n.id === e.source)!).filter(Boolean);
   const variant = node.kind === 'variant' ? board.variants.find((v) => v.id === node.entityId) : undefined;
   const gene = node.kind === 'gene' ? board.genes.find((g) => g.id === node.entityId) : undefined;
+  const publication = node.kind === 'publication' ? board.publications.find((p) => p.id === node.entityId) : undefined;
   const target = commentTarget(node);
-  const canSearchSources = !!variant && !!variant.proteinChange;
+  const canSearchSources = !readOnly && ((!!variant && !!variant.proteinChange) || !!gene);
 
   return (
     <div>
-      <div className="panel-section">
-        <div className="kicker">{KIND_LABEL[node.kind]}</div>
-        <h2 style={{ marginTop: 2 }}>{node.title}</h2>
+      <div className="panel-section panel-head">
+        <div className="row between">
+          <span className="kicker">{KIND_LABEL[node.kind]}</span>
+          <DataOriginBadge origin={node.layer} detail={originDetail(board, node)} />
+        </div>
+        <h2 style={{ marginTop: 4, overflowWrap: 'anywhere' }}>{node.title}</h2>
         {node.subtitle && <p className="small muted">{node.subtitle}</p>}
-        <div className="row" style={{ marginTop: 8, gap: 6 }}>
-          <span className={`badge layer-${node.layer}`}>{LAYER_TEXT[node.layer]}</span>
+        {node.meta && <p className="small">{node.meta}</p>}
+        <div className="row" style={{ marginTop: 6, gap: 6 }}>
           {node.certainty && <CertaintyBadge certainty={node.certainty} short />}
+          {node.contradiction && <span className="badge danger"><span aria-hidden>⇄</span> Contradicción entre fuentes</span>}
           {node.inactive && <span className="badge danger">No vigente</span>}
         </div>
-        {children.length > 0 && (
-          <div className="row" style={{ marginTop: 10 }}>
-            <button className="btn small" onClick={onToggle}>
-              {collapsed ? `Expandir relaciones${hiddenCount ? ` (+${hiddenCount})` : ''}` : 'Contraer grupo'}
+        <div className="panel-actions">
+          <button className={`btn small ${focused ? 'primary' : ''}`} onClick={onFocus} aria-pressed={focused} title="Atajo: F">
+            <Icon name="focus" /> {focused ? 'Salir de enfoque' : 'Enfocar'}
+          </button>
+          <button className="btn small" onClick={() => setExplain((x) => !x)} aria-expanded={explain}>
+            <Icon name="route" /> Explicar esta ruta
+          </button>
+          {children.length > 0 && (
+            <button className="btn small" onClick={onToggle} aria-expanded={!collapsed}>
+              {collapsed ? `Expandir${hiddenCount ? ` (+${hiddenCount})` : ''}` : 'Contraer'}
             </button>
-            <span className="tiny muted">{children.length} relación(es) directa(s)</span>
+          )}
+          {variant && !readOnly && <VariantActions caseId={board.caseRecord.id} variant={variant} onFocus={onFocus} onSources={() => setTab('sources')} />}
+          {publication && <PublicationActions publication={publication} />}
+        </div>
+        {explain && (
+          <div className="explain" style={{ marginTop: 10 }} aria-live="polite">
+            <div className="kicker" style={{ marginBottom: 4 }}>Explicación generada a partir de los datos registrados</div>
+            {explainNode(board, graph, node.id).map((s, i) => <p key={i}>{s}</p>)}
           </div>
         )}
       </div>
 
       <div className="tabs" style={{ padding: '0 8px', margin: 0 }} role="tablist">
         <button role="tab" aria-selected={tab === 'detail'} className={tab === 'detail' ? 'active' : ''} onClick={() => setTab('detail')}>Detalle</button>
-        {(canSearchSources || gene) && (
+        {canSearchSources && (
           <button role="tab" aria-selected={tab === 'sources'} className={tab === 'sources' ? 'active' : ''} onClick={() => setTab('sources')}>Fuentes externas</button>
         )}
-        <button role="tab" aria-selected={tab === 'discussion'} className={tab === 'discussion' ? 'active' : ''} onClick={() => setTab('discussion')}>
-          Discusión{node.commentCount ? ` (${node.commentCount})` : ''}
-        </button>
+        {!readOnly && (
+          <button role="tab" aria-selected={tab === 'discussion'} className={tab === 'discussion' ? 'active' : ''} onClick={() => setTab('discussion')}>
+            Discusión{node.commentCount ? ` (${node.commentCount})` : ''}
+          </button>
+        )}
       </div>
 
       {tab === 'detail' && (
         <>
           <div className="panel-section">
-            <NodeDetail board={board} node={node} />
+            <NodeDetail board={board} node={node} onSelect={onSelect} onSources={canSearchSources ? () => setTab('sources') : undefined} readOnly={readOnly} />
           </div>
-          {node.kind !== 'interpretation' && (
+          {!readOnly && node.kind !== 'interpretation' && (
             <div className="panel-section">
-              <button className="btn small" onClick={() => setInterpreting(true)}>Documentar interpretación sobre este elemento</button>
+              <button className="btn small" onClick={() => setInterpreting(true)}><Icon name="pen" /> Documentar interpretación sobre este elemento</button>
             </div>
           )}
           {(parents.length > 0 || children.length > 0) && (
             <div className="panel-section">
               <div className="kicker" style={{ marginBottom: 4 }}>Relaciones</div>
               <ul className="node-outline">
-                {parents.map((p) => (
-                  <li key={p.id}><button onClick={() => onSelect(p.id)}>← {KIND_LABEL[p.kind]}: {p.title}</button></li>
-                ))}
-                {children.map((c) => (
-                  <li key={c.id}><button onClick={() => onSelect(c.id)}>→ {KIND_LABEL[c.kind]}: {c.title}</button></li>
-                ))}
+                {parents.map((p) => <li key={p.id}><button onClick={() => onSelect(p.id)}>← {KIND_LABEL[p.kind]}: {p.title}</button></li>)}
+                {children.map((c) => <li key={c.id}><button onClick={() => onSelect(c.id)}>→ {KIND_LABEL[c.kind]}: {c.title}</button></li>)}
               </ul>
             </div>
           )}
         </>
       )}
 
-      {tab === 'sources' && (
+      {tab === 'sources' && canSearchSources && (
         <div className="panel-section stack">
           {variant && variant.proteinChange && (
             <>
@@ -124,7 +159,7 @@ export function NodePanel({ board, graph, node, collapsed, hiddenCount, onToggle
         </div>
       )}
 
-      {tab === 'discussion' && (
+      {tab === 'discussion' && !readOnly && (
         <div className="panel-section">
           <CommentThread caseId={board.caseRecord.id} targetType={target.targetType} targetId={target.targetId} />
         </div>
@@ -143,7 +178,7 @@ export function NodePanel({ board, graph, node, collapsed, hiddenCount, onToggle
   );
 }
 
-function NodeDetail({ board, node }: { board: CaseBoard; node: BoardNode }) {
+function NodeDetail({ board, node, onSelect, onSources, readOnly }: { board: CaseBoard; node: BoardNode; onSelect: (id: string) => void; onSources?: () => void; readOnly?: boolean }) {
   const id = node.entityId;
   switch (node.kind) {
     case 'case': {
@@ -203,7 +238,7 @@ function NodeDetail({ board, node }: { board: CaseBoard; node: BoardNode }) {
             <dt>Plataforma</dt><dd>{t.platform ?? '—'}</dd><dt>Panel</dt><dd>{t.panelName ?? '—'}</dd><dt>Profundidad</dt><dd>{t.meanDepth != null ? `${t.meanDepth}x` : '—'}</dd>
             <dt>LoD</dt><dd>{formatPct(t.limitOfDetectionPct)}</dd><dt>Genes analizados</dt><dd className="mono small">{t.genesAnalyzed.join(', ') || '—'}</dd>
           </dl>
-          <div className="row"><WhyItMatters term={t.testType === 'FISH' ? 'fish' : 'ngs'} /><WhyItMatters term="lod" label="Límite de detección" /></div>
+          <div className="row"><WhyItMatters term={t.testType === 'FISH' ? 'fish' : 'ngs'} /><WhyItMatters term="coverage" label="Cobertura" /><WhyItMatters term="lod" label="Límite de detección" /></div>
         </>
       );
     }
@@ -211,8 +246,7 @@ function NodeDetail({ board, node }: { board: CaseBoard; node: BoardNode }) {
       const v = board.variants.find((x) => x.id === id)!;
       const test = board.molecularTests.find((t) => t.id === v.molecularTestId);
       const sample = board.samples.find((s) => s.id === test?.sampleId);
-      const linked = board.evidenceLinks.filter((l) => l.variantId === v.id).map((l) => board.evidence.find((e) => e.id === l.evidenceId)!).filter(Boolean);
-      const dist = certaintyDistribution(linked);
+      const linked = evidenceOfVariant(board, v.id);
       const contradictions = detectContradictions(linked);
       const belowLod = v.vaf != null && test?.limitOfDetectionPct != null && v.vaf < test.limitOfDetectionPct * 2;
       return (
@@ -220,22 +254,34 @@ function NodeDetail({ board, node }: { board: CaseBoard; node: BoardNode }) {
           <dl className="facts">
             <dt>Gen</dt><dd>{v.geneSymbol}</dd><dt>HGVS c.</dt><dd className="mono">{v.hgvsC ?? '—'}</dd><dt>HGVS p.</dt><dd className="mono">{v.hgvsP ?? '—'}</dd>
             <dt>Transcrito</dt><dd className="mono">{v.transcript ?? '—'}</dd><dt>Tipo</dt><dd>{VARIANT_TYPE_LABEL[v.variantType]}</dd>
-            <dt>VAF</dt><dd>{formatPct(v.vaf)}</dd><dt>Cobertura</dt><dd>{v.coverage ?? '—'}</dd><dt>Origen</dt><dd>{ORIGIN_LABEL[v.origin]}</dd>
+            <dt>VAF</dt><dd>{formatPct(v.vaf)}</dd><dt>Cobertura</dt><dd>{v.coverage != null ? `${v.coverage}x` : '—'}</dd><dt>Origen</dt><dd>{ORIGIN_LABEL[v.origin]}</dd>
             <dt>Clasificación</dt><dd>{v.classification ?? '—'}{v.classificationSystem && ` (${v.classificationSystem})`}</dd>
             <dt>Muestra</dt><dd>{sample?.label} · {formatDate(test?.testDate)}</dd>
             <dt>% tumoral muestra</dt><dd>{formatPct(sample?.tumorCellularityPct)}</dd>
           </dl>
           {belowLod && <div className="alert warn small">La VAF registrada está cerca del límite de detección declarado del estudio ({formatPct(test?.limitOfDetectionPct)}). Dato mostrado como contexto, no como conclusión.</div>}
-          <div>
-            <div className="kicker">Mapa de incertidumbre · {linked.length} evidencia(s) enlazada(s)</div>
-            {linked.length === 0 ? <p className="small muted">Sin evidencia enlazada. Consulte «Fuentes externas».</p> : (
-              <div className="row" style={{ gap: 6, marginTop: 4 }}>
-                {CERTAINTY_ORDER.filter((c) => dist[c] > 0).map((c) => <span key={c} className={`badge c-${c}`}><span className="dot" />{CERTAINTY_SHORT[c]}: {dist[c]}</span>)}
-              </div>
-            )}
-            {contradictions.map((c) => <div key={c.key} className="alert error small" style={{ marginTop: 6 }}>Contradicción detectada entre registros de fuentes: {c.description}</div>)}
-          </div>
-          <div className="row"><WhyItMatters term="vaf" /><WhyItMatters term={v.variantType === 'CNV' ? 'cnv' : v.variantType === 'FUSION' ? 'fusion' : v.variantType === 'INDEL' ? 'indel' : 'snv'} label={`¿Qué es ${VARIANT_TYPE_LABEL[v.variantType]}?`} /></div>
+          <div className="row"><WhyItMatters term="vaf" /><WhyItMatters term="coverage" label="Cobertura" /><WhyItMatters term={v.variantType === 'CNV' ? 'cnv' : v.variantType === 'FUSION' ? 'fusion' : v.variantType === 'INDEL' ? 'indel' : 'snv'} label={`¿Qué es ${VARIANT_TYPE_LABEL[v.variantType]}?`} /></div>
+          <div className="divider" />
+          {linked.length === 0 ? (
+            <EmptyState message="No existen evidencias vinculadas a esta variante." action={onSources && !readOnly ? { label: 'Buscar evidencia', onClick: onSources } : undefined} />
+          ) : (
+            <>
+              <EvidenceSummary data={summarizeEvidence(linked)} title="Mapa de incertidumbre" />
+              {contradictions.map((c) => <div key={c.key} className="alert error small"><span aria-hidden>⇄</span> Contradicción detectada entre registros de fuentes: {c.description}</div>)}
+              <div className="kicker">Registros</div>
+              <ul className="node-outline" style={{ maxHeight: 'none' }}>
+                {linked.map((e) => (
+                  <li key={e.id}>
+                    <button onClick={() => onSelect(`evidence:${e.id}`)}>
+                      <CertaintyGlyph certainty={e.certainty} /> {EVIDENCE_TYPE_LABEL[e.evidenceType]} · {SOURCE_LABEL[e.sourceCode] ?? e.sourceCode} {e.externalId}
+                      <span className="muted"> · {e.diseaseContext ?? 'contexto no indicado'}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <WhyItMatters term="evidence-level" label="¿Qué significa la certeza?" />
+            </>
+          )}
         </div>
       );
     }
@@ -254,7 +300,7 @@ function NodeDetail({ board, node }: { board: CaseBoard; node: BoardNode }) {
             <dt>NCBI Gene</dt><dd>{g.entrezId ?? '—'}</dd><dt>UniProt</dt><dd>{g.uniprotId ?? '—'}</dd>
             <dt>Fuente</dt><dd>{version ? `${version.versionLabel} · ${formatDateTime(version.retrievedAt)}` : '—'}</dd>
           </dl>
-          <SourceButton href={g.ncbiUrl} label="Ver en NCBI Gene" />
+          <div className="row"><SourceButton href={g.ncbiUrl} label="Ver en NCBI Gene" /><WhyItMatters term="driver" label="¿Qué es un driver?" /></div>
           <p className="tiny muted">Relaciones gen→gen (cascadas de señalización): integración pendiente de fuente verificada.</p>
         </div>
       );
@@ -266,14 +312,13 @@ function NodeDetail({ board, node }: { board: CaseBoard; node: BoardNode }) {
       return (
         <div className="stack">
           <dl className="facts"><dt>Fuente</dt><dd>{SOURCE_LABEL[p.sourceCode] ?? p.sourceCode}</dd><dt>Identificador</dt><dd className="mono">{p.externalId}</dd><dt>Versión</dt><dd>{version?.versionLabel ?? '—'}</dd><dt>Consultado</dt><dd>{formatDateTime(gp?.retrievedAt)}</dd></dl>
-          <SourceButton href={p.url} />
-          <WhyItMatters term="pathway" />
+          <div className="row"><SourceButton href={p.url} /><WhyItMatters term="pathway" /></div>
         </div>
       );
     }
     case 'evidence': {
       const e = board.evidence.find((x) => x.id === id)!;
-      return <div className="stack"><EvidenceCard e={e} /><ReclassifyEvidence e={e} /><EvidenceHistory evidenceId={e.id} /></div>;
+      return <div className="stack"><EvidenceCard e={e} />{!readOnly && <ReclassifyEvidence e={e} />}<EvidenceHistory evidenceId={e.id} /></div>;
     }
     case 'publication': {
       const p = board.publications.find((x) => x.id === id)!;
