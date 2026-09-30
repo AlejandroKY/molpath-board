@@ -33,6 +33,10 @@ import {
   useInvalidateCase,
 } from './forms';
 import { useCanEditClinical, useCaseBoard } from './useCaseBoard';
+import { MolecularCaseSummary } from './MolecularCaseSummary';
+import { CaseChangesSummary, OpenQuestionsPanel } from './insightPanels';
+import { SampleActions, VariantActions } from './QuickActions';
+import { DataOriginBadge, EmptyState, ResponsiveTable } from '../../components/scientific';
 
 type DialogState =
   | { kind: 'case' }
@@ -70,11 +74,16 @@ export function CaseDetailPage() {
       />
       <CaseTabs caseId={c.id} />
       <Disclaimer>Caso ficticio de demostración.</Disclaimer>
+      <MolecularCaseSummary board={b} />
+      <div className="grid grid-2" style={{ marginBottom: 16 }}>
+        <CaseChangesSummary board={b} />
+        <OpenQuestionsPanel board={b} compact />
+      </div>
       {!canEdit && <div className="alert info small" style={{ marginBottom: 12 }}>Su rol puede consultar, comentar, documentar interpretaciones y crear snapshots, pero no editar datos de laboratorio.</div>}
 
       <div className="grid grid-2" style={{ marginBottom: 16 }}>
         <section className="card">
-          <div className="card-head"><h2>Caso</h2><span className="badge layer-case">Datos del caso</span></div>
+          <div className="card-head"><h2>Datos del caso</h2><DataOriginBadge origin="case" /></div>
           <div className="card-body">
             <dl className="facts">
               <dt>Case ID</dt><dd className="mono">{c.caseCode}</dd>
@@ -98,7 +107,14 @@ export function CaseDetailPage() {
           {canEdit && <button className="btn primary" onClick={() => setDialog({ kind: 'sample' })}>Añadir muestra</button>}
         </div>
       </div>
-      {b.samples.length === 0 && <div className="card"><Empty>Todavía no hay muestras. Añada una para registrar histología, IHQ y estudios moleculares.</Empty></div>}
+      {b.samples.length === 0 && (
+        <div className="card">
+          <EmptyState
+            message="Todavía no hay muestras. Añada una para registrar histología, IHQ y estudios moleculares."
+            action={canEdit ? { label: 'Registrar la primera muestra', onClick: () => setDialog({ kind: 'sample' }) } : undefined}
+          />
+        </div>
+      )}
       <div className="stack">
         {b.samples.map((s) => (
           <SampleCard key={s.id} board={b} sample={s} canEdit={canEdit} open={setDialog} />
@@ -163,7 +179,10 @@ function SampleCard({ board, sample, canEdit, open }: { board: CaseBoard; sample
           <h2>{sample.label}</h2>
           <div className="small muted">{SAMPLE_TYPE_LABEL[sample.sampleType]} · {sample.anatomicSite ?? 'sitio no indicado'} · {formatDate(sample.collectionDate)}</div>
         </div>
-        {canEdit && <button className="btn small" onClick={() => open({ kind: 'sample', sample })}>Editar muestra</button>}
+        <div className="row">
+          <SampleActions caseId={board.caseRecord.id} sample={sample} canCompare={board.samples.length > 1} />
+          {canEdit && <button className="btn small" onClick={() => open({ kind: 'sample', sample })}>Editar muestra</button>}
+        </div>
       </div>
       <div className="card-body stack">
         <dl className="facts">
@@ -176,44 +195,41 @@ function SampleCard({ board, sample, canEdit, open }: { board: CaseBoard; sample
 
         <div>
           <div className="row between"><h3>Histología</h3>{canEdit && <button className="btn small" onClick={() => open({ kind: 'histology', sampleId: sample.id })}>Añadir</button>}</div>
-          {histology.length === 0 ? <p className="small muted">Sin hallazgos histológicos registrados.</p> : histology.map((h) => (
+          {histology.length === 0 ? <p className="small muted">Sin hallazgos histológicos registrados para esta muestra.</p> : histology.map((h) => (
             <p key={h.id} className="small"><strong>{h.diagnosis}</strong>{h.histologicSubtype && ` · ${h.histologicSubtype}`}{h.grade && ` · grado ${h.grade}`}{h.description && <span className="muted"> — {h.description}</span>}</p>
           ))}
         </div>
 
         <div>
           <div className="row between"><h3>Inmunohistoquímica</h3>{canEdit && <button className="btn small" onClick={() => open({ kind: 'ihc', sampleId: sample.id })}>Añadir marcador</button>}</div>
-          {ihc.length === 0 ? <p className="small muted">Sin marcadores registrados.</p> : (
-            <div className="table-wrap">
-              <table className="data">
-                <thead><tr><th>Marcador</th><th>Resultado</th><th className="num">%</th><th>Intensidad</th><th>Score</th><th>Método</th><th>Observaciones</th>{canEdit && <th />}</tr></thead>
-                <tbody>
-                  {ihc.map((r) => (
-                    <tr key={r.id}>
-                      <td><strong>{r.marker}</strong></td>
-                      <td>{IHC_RESULT_LABEL[r.result]}</td>
-                      <td className="num">{r.percentage ?? '—'}</td>
-                      <td>{r.intensity ? IHC_INTENSITY_LABEL[r.intensity] : '—'}</td>
-                      <td>{r.score ?? '—'}</td>
-                      <td className="small muted">{r.method ?? '—'}</td>
-                      <td className="small">{r.observations ?? '—'}</td>
-                      {canEdit && (
-                        <td>
-                          <button className="btn ghost small danger" onClick={() => window.confirm(`¿Eliminar ${r.marker}? El estado previo queda en auditoría.`) && del.mutate(r.id)}>Eliminar</button>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          {ihc.length === 0 ? (
+            <EmptyState message="No hay marcadores de inmunohistoquímica registrados para esta muestra." action={canEdit ? { label: 'Registrar marcador IHQ', onClick: () => open({ kind: 'ihc', sampleId: sample.id }) } : undefined} />
+          ) : (
+            <ResponsiveTable
+              caption={`Inmunohistoquímica de ${sample.label}`}
+              rows={ihc}
+              rowKey={(r) => r.id}
+              columns={[
+                { key: 'marker', header: 'Marcador', primary: true, cell: (r) => <strong>{r.marker}</strong> },
+                { key: 'result', header: 'Resultado', cell: (r) => IHC_RESULT_LABEL[r.result] },
+                { key: 'pct', header: '%', numeric: true, cell: (r) => r.percentage ?? '—' },
+                { key: 'score', header: 'Score', cell: (r) => r.score ?? '—' },
+                { key: 'int', header: 'Intensidad', hideOnCard: true, cell: (r) => (r.intensity ? IHC_INTENSITY_LABEL[r.intensity] : '—') },
+                { key: 'method', header: 'Método', hideOnCard: true, cell: (r) => <span className="small muted">{r.method ?? '—'}</span> },
+                { key: 'obs', header: 'Observaciones', hideOnCard: true, cell: (r) => <span className="small">{r.observations ?? '—'}</span> },
+                ...(canEdit ? [{ key: 'del', header: 'Acción', cell: (r: typeof ihc[number]) => <button className="btn ghost small danger" onClick={() => window.confirm(`¿Eliminar ${r.marker}? El estado previo queda en auditoría.`) && del.mutate(r.id)}>Eliminar</button> }] : []),
+              ]}
+            />
           )}
           <ErrorBox error={del.error} />
         </div>
 
         <div>
           <div className="row between"><h3>Estudios moleculares</h3>{canEdit && <button className="btn small" onClick={() => open({ kind: 'test', sampleId: sample.id })}>Añadir estudio</button>}</div>
-          {tests.length === 0 ? <p className="small muted">Sin estudios moleculares.</p> : tests.map((t) => <TestBlock key={t.id} board={board} test={t} canEdit={canEdit} open={open} />)}
+          <div id={`tests-${sample.id}`} />
+          {tests.length === 0 ? (
+            <EmptyState message="No existen estudios moleculares registrados para esta muestra." action={canEdit ? { label: 'Registrar estudio molecular', onClick: () => open({ kind: 'test', sampleId: sample.id }) } : undefined} />
+          ) : tests.map((t) => <TestBlock key={t.id} board={board} test={t} canEdit={canEdit} open={open} />)}
         </div>
       </div>
     </section>
@@ -234,27 +250,25 @@ function TestBlock({ board, test, canEdit, open }: { board: CaseBoard; test: Mol
         {test.genesAnalyzed.length > 0 && <> · genes analizados: <span className="mono">{test.genesAnalyzed.join(', ')}</span></>}
       </div>
       <div className="row between"><strong className="small">Variantes</strong>{canEdit && <button className="btn small" onClick={() => open({ kind: 'variant', testId: test.id })}>Añadir variante</button>}</div>
-      {variants.length === 0 ? <p className="small muted">Sin variantes registradas en este estudio.</p> : (
-        <div className="table-wrap">
-          <table className="data">
-            <thead><tr><th>Gen</th><th>HGVS c.</th><th>HGVS p.</th><th>Tipo</th><th className="num">VAF</th><th className="num">Cobertura</th><th>Origen</th><th>Clasificación</th><th>Evidencia</th></tr></thead>
-            <tbody>
-              {variants.map((v) => (
-                <tr key={v.id}>
-                  <td><strong>{v.geneSymbol}</strong>{v.fusionPartnerSymbol && `::${v.fusionPartnerSymbol}`}</td>
-                  <td className="mono">{v.hgvsC ?? '—'}</td>
-                  <td className="mono">{v.hgvsP ?? '—'}</td>
-                  <td>{VARIANT_TYPE_LABEL[v.variantType]}{v.copyNumber != null && ` (${v.copyNumber} copias)`}</td>
-                  <td className="num">{formatPct(v.vaf)}</td>
-                  <td className="num">{v.coverage ?? '—'}</td>
-                  <td>{ORIGIN_LABEL[v.origin]}</td>
-                  <td className="small">{v.classification ?? '—'}</td>
-                  <td><Link className="small" to={`/cases/${board.caseRecord.id}/board?node=variant:${v.id}`}>{evidenceCount(v.id)} enlazada(s) →</Link></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {variants.length === 0 ? (
+        <EmptyState message="No hay variantes registradas en este estudio." action={canEdit ? { label: 'Registrar la primera variante', onClick: () => open({ kind: 'variant', testId: test.id }) } : undefined} />
+      ) : (
+        <ResponsiveTable
+          caption="Variantes del estudio"
+          rows={variants}
+          rowKey={(v) => v.id}
+          columns={[
+            { key: 'gene', header: 'Variante', primary: true, cell: (v) => <><strong>{v.geneSymbol}</strong>{v.fusionPartnerSymbol && `::${v.fusionPartnerSymbol}`} <span className="mono">{v.hgvsP ?? ''}</span></> },
+            { key: 'c', header: 'HGVS c.', cell: (v) => <span className="mono">{v.hgvsC ?? '—'}</span> },
+            { key: 'vaf', header: 'VAF', numeric: true, cell: (v) => formatPct(v.vaf) },
+            { key: 'cov', header: 'Cobertura', numeric: true, cell: (v) => (v.coverage != null ? `${v.coverage}x` : '—') },
+            { key: 'type', header: 'Tipo', cell: (v) => <>{VARIANT_TYPE_LABEL[v.variantType]}{v.copyNumber != null && ` (${v.copyNumber} copias)`}</> },
+            { key: 'origin', header: 'Origen', cell: (v) => ORIGIN_LABEL[v.origin] },
+            { key: 'cls', header: 'Clasificación', hideOnCard: true, cell: (v) => <span className="small">{v.classification ?? '—'}</span> },
+            { key: 'ev', header: 'Evidencias', cell: (v) => <Link className="small" to={`/cases/${board.caseRecord.id}/board?node=variant:${v.id}`}>{evidenceCount(v.id)} →</Link> },
+            { key: 'act', header: 'Acciones', cell: (v) => <VariantActions caseId={board.caseRecord.id} variant={v} /> },
+          ]}
+        />
       )}
       <div className="row between" style={{ marginTop: 8 }}><strong className="small">Biomarcadores</strong>{canEdit && <button className="btn small" onClick={() => open({ kind: 'biomarker', testId: test.id })}>Añadir biomarcador</button>}</div>
       {biomarkers.length === 0 ? <p className="small muted">Sin biomarcadores (TMB, MSI, HRD…).</p> : (

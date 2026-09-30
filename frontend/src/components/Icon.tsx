@@ -23,6 +23,15 @@ const PATHS: Record<string, string> = {
   link: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
   check: 'M5 12l5 5 9-10',
   warning: 'M12 3l10 18H2zM12 10v5M12 18v.1',
+  person: 'M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM4 21a8 8 0 0 1 16 0',
+  globe: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18',
+  pen: 'M15 4l5 5L9 20H4v-5zM13 6l5 5',
+  chevron: 'M6 9l6 6 6-6',
+  focus: 'M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  route: 'M6 3v6a3 3 0 0 0 3 3h6a3 3 0 0 1 3 3v6M6 3a1.5 1.5 0 1 0 0 .1M18 21a1.5 1.5 0 1 0 0 .1',
+  present: 'M3 4h18v12H3zM12 16v4M8 20h8',
+  copy: 'M8 8h12v12H8zM4 16V4h12',
+  more: 'M5 12h.01M12 12h.01M19 12h.01',
   history: 'M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6M12 8v4l3 2',
 };
 

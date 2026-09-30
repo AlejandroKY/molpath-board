@@ -2,7 +2,7 @@ import { useEffect, useId, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { BRAND } from '../config/brand';
 import { ApiError } from '../data/gateway';
-import { BASIS_LABEL, CERTAINTY_LABEL, CERTAINTY_SHORT } from '../domain/labels';
+import { BASIS_LABEL, CERTAINTY_LABEL, CERTAINTY_SHORT, CERTAINTY_SYMBOL } from '../domain/labels';
 import type { Certainty, CertaintyBasis } from '../domain/types';
 import { Icon } from './Icon';
 
@@ -49,7 +49,7 @@ export function CertaintyBadge({ certainty, basis, short }: { certainty: Certain
   const title = `${CERTAINTY_LABEL[certainty]}${basis ? ` — ${BASIS_LABEL[basis]}` : ''}`;
   return (
     <span className={`badge c-${certainty}`} title={title}>
-      <span className="dot" aria-hidden />
+      <span className="glyph" aria-hidden>{CERTAINTY_SYMBOL[certainty]}</span>
       {short ? CERTAINTY_SHORT[certainty] : CERTAINTY_LABEL[certainty]}
     </span>
   );

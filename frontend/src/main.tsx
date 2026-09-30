@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import '@xyflow/react/dist/style.css';
 import './styles/app.css';
+import './styles/redesign.css';
 import { App } from './app/App';
 
 createRoot(document.getElementById('root')!).render(

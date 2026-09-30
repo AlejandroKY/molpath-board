@@ -124,6 +124,16 @@ export const CERTAINTY_SHORT: Record<Certainty, string> = {
   UNKNOWN: 'Desconocida',
 };
 
+/** Símbolo por nivel de certeza: la incertidumbre nunca se comunica sólo con color. */
+export const CERTAINTY_SYMBOL: Record<Certainty, string> = {
+  STRONG: '●',
+  MODERATE: '◐',
+  LIMITED: '△',
+  CONTRADICTORY: '⇄',
+  INSUFFICIENT: '○',
+  UNKNOWN: '?',
+};
+
 export const CERTAINTY_ORDER: Certainty[] = ['STRONG', 'MODERATE', 'LIMITED', 'CONTRADICTORY', 'INSUFFICIENT', 'UNKNOWN'];
 
 export const BASIS_LABEL: Record<CertaintyBasis, string> = {

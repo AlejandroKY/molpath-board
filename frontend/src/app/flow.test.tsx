@@ -45,7 +45,7 @@ describe('flujo clínico completo en la interfaz', () => {
     dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/^Marcador/), 'TTF-1');
     await user.click(within(dialog).getByRole('button', { name: 'Guardar' }));
-    expect(await screen.findByText('TTF-1')).toBeInTheDocument();
+    expect((await screen.findAllByText('TTF-1')).length).toBeGreaterThan(0);
 
     // estudio molecular
     await user.click(screen.getByRole('button', { name: 'Añadir estudio' }));
@@ -61,7 +61,7 @@ describe('flujo clínico completo en la interfaz', () => {
     await user.type(within(dialog).getByLabelText(/HGVS p\./), 'p.Leu858Arg');
     await user.type(within(dialog).getByLabelText(/^VAF/), '32.5');
     await user.click(within(dialog).getByRole('button', { name: 'Guardar' }));
-    expect(await screen.findByText('p.Leu858Arg')).toBeInTheDocument();
+    expect((await screen.findAllByText('p.Leu858Arg')).length).toBeGreaterThan(0);
 
     // pizarra
     await user.click(screen.getByRole('link', { name: 'Abrir pizarra' }));

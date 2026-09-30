@@ -1,7 +1,7 @@
 import { Handle, Position, type Node, type NodeProps } from '@xyflow/react';
 import { memo } from 'react';
 import { KIND_LABEL, type BoardNode } from '../../domain/boardGraph';
-import { CERTAINTY_SHORT } from '../../domain/labels';
+import { CERTAINTY_SHORT, CERTAINTY_SYMBOL } from '../../domain/labels';
 
 export type MpNodeData = { node: BoardNode; hidden: number; collapsed: boolean };
 export type MpFlowNode = Node<MpNodeData, 'mp'>;
@@ -27,7 +27,7 @@ function MpNodeImpl({ data, selected }: NodeProps<MpFlowNode>) {
         <div className="n-foot">
           {n.certainty && (
             <span className={`badge c-${n.certainty}`} style={{ fontSize: 10.5, padding: '0 6px' }}>
-              <span className="dot" aria-hidden />
+              <span className="glyph" aria-hidden>{CERTAINTY_SYMBOL[n.certainty]}</span>
               {CERTAINTY_SHORT[n.certainty]}
             </span>
           )}
